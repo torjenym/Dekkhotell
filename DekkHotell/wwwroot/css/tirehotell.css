@@ -1,0 +1,6 @@
+﻿table.dataTable > tbody > tr.even-row {
+    background-color: #e6e6e6;
+}
+#dekkhotell_table {
+    /*border: 5px solid blue;*/
+}

@@ -18,8 +18,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+//app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapRazorPages();
+app.UseEndpoints(endpoints => {
+    endpoints.MapDefaultControllerRoute();
+    app.MapRazorPages();
+    endpoints.MapControllers();
+});
+//app.MapRazorPages();
 
 app.Run();

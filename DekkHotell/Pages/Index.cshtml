@@ -1,10 +1,76 @@
 ﻿@page
 @model IndexModel
+<link rel="stylesheet" type="text/css" href="~/css/tirehotell.css" asp-append-version="true" />
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "DekkHotell";
+}
+@section Scripts
+{
+    <script type="text/javascript" src="~/js/tirehotell.js" asp-append-version="true"></script>
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div>
+    @*<h1 class="display-4">Velkommen</h1>*@
+
+    @*<p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>*@
+    <table id="dekkhotell_table" class="table table-bordered" style="width:100%">
+            @*table-striped*@
+        <thead>
+            <tr>
+                <th>Lokasjon</th>
+                <th>Reg.Nr.</th>
+                <th>Fornavn</th>
+                <th>Etternavn</th>
+                <th>Tlf</th>
+                <th>Epost</th>
+                <th>Notat</th>
+                <th>Merke</th>
+                <th>Modell</th>
+                <th>
+                    Rediger
+                </th>
+                @*<th>Avtale</th>
+                <th>Betalt</th>
+                <th>Id</th>*@
+            </tr>
+        </thead>
+            @*<tbody><tr class="odd"><td valign="top" colspan="6" class="dataTables_empty">Loading...</td></tr></tbody>*@
+        <tfoot>
+            <tr>
+                <th>Lokasjon</th>
+                <th>Reg.Nr.</th>
+                <th>Fornavn</th>
+                <th>Etternavn</th>
+                <th>Tlf</th>
+                <th>Epost</th>
+                <th>Notat</th>
+                <th>Merke</th>
+                <th>Modell</th>
+                <th>
+                    Rediger
+                </th>
+                @*<th>Avtale</th>
+                <th>Betalt</th>
+                <th>Id</th>*@
+            </tr>
+        </tfoot>
+    </table>
+    
+    <div id="my_modal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="modal_title" class="modal-title">
+                        <!-- TITLE -->
+                    </h5>
+                </div>
+                <div id="modal_content" class="modal-body">
+                    <!-- CONTENT -->
+                </div>
+                <div id="modal_footer" class="modal-footer">
+                    <!-- ACTION BUTTONS -->
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

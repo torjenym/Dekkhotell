@@ -1,0 +1,108 @@
+{
+  "data": [
+    {
+      "name": "Id",
+      "type": "id",
+      "max": 0,
+      "min": 0,
+      "required": true,
+      "default": "auto"
+    },
+    {
+      "name": "Lokasjon",
+      "type": "location",
+      "max": 0,
+      "min": 0,
+      "required": true,
+      "default": null
+    },
+    {
+      "name": "RegNr",
+      "type": "string",
+      "max": 15,
+      "min": 3,
+      "required": true,
+      "default": null
+    },
+    {
+      "name": "Fornavn",
+      "type": "string",
+      "max": 40,
+      "min": 0,
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "Etternavn",
+      "type": "string",
+      "max": 40,
+      "min": 0,
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "Tlf",
+      "type": "string",
+      "max": 25,
+      "min": 0,
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "Epost",
+      "type": "string",
+      "max": 60,
+      "min": 0,
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "Notat",
+      "type": "string",
+      "max": 500,
+      "min": 0,
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "Merke",
+      "type": "string",
+      "max": 40,
+      "min": 0,
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "Modell",
+      "type": "string",
+      "max": 40,
+      "min": 0,
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "Avtale",
+      "type": "string",
+      "max": 60,
+      "min": 0,
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "Betalt",
+      "type": "string",
+      "max": 60,
+      "min": 0,
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "Logg",
+      "type": "TODO",
+      "max": 60,
+      "min": 0,
+      "required": false,
+      "default": null
+    }
+  ]
+}
