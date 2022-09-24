@@ -72,7 +72,8 @@ $(document).ready(function () {
                 if (error.status === 401) {
                     localStorage.removeItem('dekkHotellUserToken');
                     localStorage.removeItem('dekkHotellUsername');
-                    alert("Session timeout. You need to login again")
+                    alert("Session timeout. You need to login again");
+                    window.location.reload();
                     return;
                 }
                 alert("Failed saving data. Contact support ... Ring han Torje")

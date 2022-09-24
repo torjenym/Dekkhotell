@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DekkHotell.Models;
+using Newtonsoft.Json;
 
 namespace DekkHotell.Helpers
 {
@@ -12,6 +13,16 @@ namespace DekkHotell.Helpers
         public static void KillSessionObject(this ISession session, string key)
         {
             session.Remove(key);
+        }
+
+        public static bool VerifyAuthToken(this ISession session, string token)
+        {
+            var authorization = GetSessionObjectFromKey<Auth>(session, "auth");
+            if (authorization == null || authorization.Token.ToString() != token)
+            {
+                return false;
+            }
+            return true;
         }
 
         public static T? GetSessionObjectFromKey<T>(this ISession session, string key)

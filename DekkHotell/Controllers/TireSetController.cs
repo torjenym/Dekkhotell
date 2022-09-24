@@ -26,9 +26,8 @@ namespace DekkHotell.Controllers
         [HttpPut, Route("{id}")]
         public ActionResult Update(int id, TireSet tireSet)
         {
-            var authorization = SessionHelper.GetSessionObjectFromKey<Auth>(HttpContext.Session, "auth");
             Request.Headers.TryGetValue("Authorization", out var token);
-            if (authorization == null || authorization.Token != token)
+            if (!SessionHelper.VerifyAuthToken(HttpContext.Session, token))
             {
                 return Unauthorized();
             }
