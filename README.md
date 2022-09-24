@@ -39,3 +39,7 @@ tlf
 * Sette feltkrav: RegNr, navn, tlf ???
 * darkmode
 
+https://icons.getbootstrap.com/icons/door-open/
+https://getbootstrap.com/docs/5.2/components/navbar/
+https://datatables.net/examples/styling/bootstrap5.html
+
