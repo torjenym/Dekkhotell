@@ -4,3 +4,9 @@
 #dekkhotell_table {
     /*border: 5px solid blue;*/
 }
+.location-taken {
+    float: right;
+    padding-right: 12px;
+    width: 0;
+    color: red;
+}

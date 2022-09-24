@@ -17,6 +17,16 @@ body {
   margin-bottom: 60px;
 }
 
+.logged-user-name-label {
+    font-size: 25px;
+    padding-right: 12px;
+    text-transform: capitalize;
+}
+
 .uppercase {
     text-transform: uppercase;
+}
+
+.me-2 {
+    max-width: 140px;
 }

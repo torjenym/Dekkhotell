@@ -12,14 +12,64 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">NymoBil</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/">DekkHotell</a>
+                        </li>
+                        @*<li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Dropdown
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                        </li>*@
+                    </ul>
+                    @*<form class="d-flex">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>*@
+                    @if (@Model.Authorization != null && @Model.Authorization.Username != null) {
+                        <form id="login_form" class="d-flex">
+                            <label class="logged-user-name-label"><i class="bi bi-person"></i> @Model.Authorization.Username</label>
+                            <button class="btn btn-outline-danger" type="button" id="logout_btn" title="Logg ut"><i class="bi bi-box-arrow-right"></i></button>
+                        </form>
+                    } else {
+                        <form id="login_form" class="d-flex">
+                            <input class="form-control me-2" type="text" id="login_username" placeholder="Brukernavn" aria-label="Brukernavn" title="Brukernavn">
+                            <input class="form-control me-2" type="password" id="login_password" placeholder="Passord" aria-label="Passord" title="Passord">
+                            <button class="btn btn-outline-success" type="button" id="login_btn" title="Logg inn"><i class="bi bi-key"></i></button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </nav>
+
+        @*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">DekkHotell</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                @*<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <!--<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
@@ -28,9 +78,9 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
                     </ul>
-                </div>*@
+                </div>-->
             </div>
-        </nav>
+        </nav>*@
     </header>
     <div class="container">
         <main role="main" class="pb-3">

@@ -1,4 +1,5 @@
-﻿using DekkHotell.Models;
+﻿using DekkHotell.Helpers;
+using DekkHotell.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
@@ -6,16 +7,9 @@ using System.Xml.Linq;
 
 namespace DekkHotell.Controllers
 {
-    [Route("tireset")]
+    [Route("api/v1/tireset")]
     public class TireSetController : Controller
     {
-        //private readonly SolutionEnvironment myEnvironment;
-        //public TireSetController(SolutionEnvironment solutionEnvironment)
-        //{
-        //    myEnvironment = solutionEnvironment;
-        //}
-        //[ValidateAntiForgeryToken]
-
         [HttpGet, Route("")]
         public JsonResult Index()
         {
@@ -28,9 +22,17 @@ namespace DekkHotell.Controllers
             return Json(new TireSetResult { Data = tireSets });
         }
 
+        // AUTH REQUIRED
         [HttpPut, Route("{id}")]
         public ActionResult Update(int id, TireSet tireSet)
         {
+            var authorization = SessionHelper.GetSessionObjectFromKey<Auth>(HttpContext.Session, "auth");
+            Request.Headers.TryGetValue("Authorization", out var token);
+            if (authorization == null || authorization.Token != token)
+            {
+                return Unauthorized();
+            }
+
             var tireSets = LoadTireSetJson();
             tireSets[id] = tireSet;
             try
@@ -124,6 +126,13 @@ namespace DekkHotell.Controllers
             }
             return new List<TireSet>();
         }
+
+        //private readonly SolutionEnvironment myEnvironment;
+        //public TireSetController(SolutionEnvironment solutionEnvironment)
+        //{
+        //    myEnvironment = solutionEnvironment;
+        //}
+        //[ValidateAntiForgeryToken]
 
         //// GET: HomeController/Details/5
         //public ActionResult Details(int id)

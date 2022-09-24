@@ -1,11 +1,13 @@
 ﻿let tireHotel;
 let tireSetTable;
 $(document).ready(function () {
+    let dekkHotellUserToken = localStorage.getItem('dekkHotellUserToken');
+
     // https://datatables.net/examples/styling/bootstrap5.html
     function initDekkHotell() {
         tireSetTable = $('#dekkhotell_table').DataTable({
             type: "GET",
-            ajax: "/tireset",
+            ajax: "/api/v1/tireset",
             stripeClasses: ['odd-row', 'even-row'],
             language: {
                 url: 'json/datatables_no.json'
@@ -28,6 +30,21 @@ $(document).ready(function () {
                     }
                 }
             ],
+            columnDefs: [
+                { "className": "dt-center", "targets": 0 }, // "_all"
+                {
+                    targets: [0], render: function (a, b, data, d) {
+                        console.log();
+                        if (data.regNr !== null && data.regNr !== '') {
+                            return a + ' <i class="bi bi-lock location-taken"></i>';
+                        }
+                        return a;
+                    }
+                }
+            ],
+            error: function () {
+                alert("Failed loading data. Contact support ... Ring han Torje")
+            },
             fnInitComplete: function (settings, json) {
                 loadedTableSetup(json);
             }
@@ -35,18 +52,29 @@ $(document).ready(function () {
     }
 
     function updateDekkHotell(obj) {
+        if (dekkHotellUserToken == null) {
+            alert("No access!");
+            return;
+        }
         $.ajax({
             type: "PUT",
-            url: "/tireset/" + obj.Id,
+            url: "/api/v1/tireset/" + obj.Id,
+            headers: { "Authorization": localStorage.getItem('dekkHotellUserToken') },
             data: obj,
             dataType: 'json',
-            success: function (e, d, b) {
+            success: function () {
                 tireSetTable.ajax.reload(function (json) {
                     loadedTableSetup(json);
                 });
                 $('#my_modal').modal('hide');
             },
-            error: function (e, d, b) {
+            error: function (error) {
+                if (error.status === 401) {
+                    localStorage.removeItem('dekkHotellUserToken');
+                    localStorage.removeItem('dekkHotellUsername');
+                    alert("Session timeout. You need to login again")
+                    return;
+                }
                 alert("Failed saving data. Contact support ... Ring han Torje")
             }
         });
@@ -58,7 +86,11 @@ $(document).ready(function () {
     }
 
     function getEditButton(d, t, row) {
-        return '<button type="button" class="btn btn-primary btn-sm edit-btn" data=' + row.id + ' title="Rediger lokasjon">'
+        if (dekkHotellUserToken) {
+            return '<button type="button" class="btn btn-primary btn-sm edit-btn" data=' + row.id + ' title="Rediger lokasjon">'
+                + '<i class="bi bi-pencil-fill"></i></svg></button>';
+        }
+        return '<button type="button" class="btn btn-secondary btn-sm edit-btn" data=' + row.id + ' title="Rediger lokasjon" disabled>'
             + '<i class="bi bi-pencil-fill"></i></svg></button>';
     }
 
@@ -163,11 +195,13 @@ $(document).ready(function () {
     }
 
     function editButtonHandler() {
-        $('.edit-btn').unbind('click');
-        $('.edit-btn').click(function () {
-            let id = $(this).attr('data');
-            editLocation(id);
-        });
+        if (localStorage.getItem('dekkHotellUserToken')) {
+            $('.edit-btn').unbind('click');
+            $('.edit-btn').click(function () {
+                let id = $(this).attr('data');
+                editLocation(id);
+            });
+        }
     }
 
     function editModalHandlers() {

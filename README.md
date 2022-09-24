@@ -8,4 +8,34 @@ Add to appsettings.json -->
       "Pin": "xxxx"
     }
   ]
+  
+  
+  
+Felter:
+-avtale
+-betalt
+epost
+etternavn
+fornavn
+id
+lokasjon
+merke
+modell
+notat
+regNr
+tlf
+
+* Lagre siste versjon. Tilfelle feil, ta vare på forrige versjon. Mulig å hente fram for bruker
+* Innlogging
+	* Logge hvem gjorde sist endring, også på siste versjon
+* Bytte lokasjon ved redigering
+* Oversettelse datatable
+* Info blokk: Ledige plasser o.l.
+* Datatable overflow --> kollapse med hover visning
+* Backup. mndtlig eller ved intervall ved bruk. Inntil videre håndtert med random
+* Datatypes i tabell. epost og tlf med direktelink
+* Facelift
+* json --> database
+* Sette feltkrav: RegNr, navn, tlf ???
+* darkmode
 
