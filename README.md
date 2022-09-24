@@ -38,6 +38,7 @@ tlf
 * json --> database
 * Sette feltkrav: RegNr, navn, tlf ???
 * darkmode
+* skjul personalia ved manglende innlogging ???
 
 https://icons.getbootstrap.com/icons/door-open/
 https://getbootstrap.com/docs/5.2/components/navbar/
