@@ -41,6 +41,7 @@ tlf
 * skjul personalia ved manglende innlogging ???
 * modell dekkhotell ???
 * portal landingsside. på sikt
+* split opp sessionshåndtering. globalt tilgjengelig
 
 https://icons.getbootstrap.com/icons/door-open/
 https://getbootstrap.com/docs/5.2/components/navbar/
