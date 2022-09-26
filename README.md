@@ -42,6 +42,7 @@ tlf
 * modell dekkhotell ???
 * portal landingsside. på sikt
 * split opp sessionshåndtering. globalt tilgjengelig
+* endre personlig passord / pin
 
 https://icons.getbootstrap.com/icons/door-open/
 https://getbootstrap.com/docs/5.2/components/navbar/
