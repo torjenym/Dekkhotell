@@ -9,6 +9,18 @@ Add to appsettings.json -->
     }
   ]
   
+ Add users --> Data/Json/users.json:
+ "Users": {
+    "Listed": [
+      {
+        "Username": "xxx",
+        "Password": "xxx"
+      }
+	  ...
+	  ...
+    ]
+  }
+  
   
   
 Felter:
@@ -25,15 +37,15 @@ notat
 regNr
 tlf
 
-* Lagre siste versjon. Tilfelle feil, ta vare på forrige versjon. Mulig å hente fram for bruker
-* Innlogging
-	* Logge hvem gjorde sist endring, også på siste versjon
+* DONE Lagre siste versjon. Tilfelle feil, ta vare på forrige versjon. Mulig å hente fram for bruker
+* DONE Innlogging
+* DONE Logge hvem gjorde sist endring, også på siste versjon
 * Bytte lokasjon ved redigering
-* Oversettelse datatable
-* Info blokk: Ledige plasser o.l.
+* DONE Oversettelse datatable
+* DONE Info blokk: Ledige plasser o.l.
 * Datatable overflow --> kollapse med hover visning
 * Backup. mndtlig eller ved intervall ved bruk. Inntil videre håndtert med random
-* Datatypes i tabell. epost og tlf med direktelink
+* DONE Datatypes i tabell. epost og tlf med direktelink
 * Facelift
 * json --> database
 * Sette feltkrav: RegNr, navn, tlf ???
@@ -41,8 +53,8 @@ tlf
 * skjul personalia ved manglende innlogging ???
 * modell dekkhotell ???
 * portal landingsside. på sikt
-* split opp sessionshåndtering. globalt tilgjengelig
-* endre personlig passord / pin
+* DONE split opp sessionshåndtering. globalt tilgjengelig
+* DONE endre personlig passord / pin
 
 https://icons.getbootstrap.com/icons/door-open/
 https://getbootstrap.com/docs/5.2/components/navbar/

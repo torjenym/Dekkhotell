@@ -3,6 +3,7 @@ using DekkHotell.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace DekkHotell.Controllers
@@ -31,21 +32,49 @@ namespace DekkHotell.Controllers
             {
                 return Unauthorized();
             }
-
+            var authorization = SessionHelper.GetSessionObjectFromKey<Auth>(HttpContext.Session, "auth");
+            if (authorization == null || authorization.Username == null)
+            {
+                return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 200");
+            }
             var tireSets = LoadTireSetJson();
+            var oldVersion = tireSets[id];
+
             tireSets[id] = tireSet;
+            tireSets[id].ForrigeVersjon = GetLastVersionTireSet(oldVersion);
+            tireSets[id].Forfatter = authorization.Username;
             try
             {
                 if (SaveTireSetJson(tireSets))
                 {
                     return NoContent();
                 }
-                return BadRequest();
+                return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 201");
             }
             catch
             {
-                return BadRequest();
+                return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 202");
             }
+        }
+
+        private static LastVersion GetLastVersionTireSet(TireSet tireset)
+        {
+            return new LastVersion()
+            {
+                Id = tireset.Id,
+                Lokasjon = tireset.Lokasjon,
+                RegNr = tireset.RegNr,
+                Fornavn = tireset.Fornavn,
+                Etternavn = tireset.Etternavn,
+                Tlf = tireset.Tlf,
+                Epost = tireset.Epost,
+                Notat = tireset.Notat,
+                Merke = tireset.Merke,
+                Modell = tireset.Modell,
+                Avtale = tireset.Avtale,
+                Betalt = tireset.Betalt,
+                Forfatter = tireset.Forfatter
+            };
         }
 
         private static bool ShouldWeBackupTireSetJson()

@@ -22,6 +22,9 @@ body {
     padding-right: 12px;
     text-transform: capitalize;
 }
+.logged-user-name-btn {
+    margin-right: 12px;
+}
 
 .uppercase {
     text-transform: uppercase;

@@ -46,12 +46,21 @@
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search</button>
                     </form>*@
+                    <script type="text/javascript">
+                        @*Init session alive*@
+                        var sessionToBeRemoved = false;
+                    </script>
                     @if (@Model.Authorization != null && @Model.Authorization.Username != null) {
                         <form id="login_form" class="d-flex">
                             <label class="logged-user-name-label"><i class="bi bi-person"></i> @Model.Authorization.Username</label>
-                            <button class="btn btn-outline-danger" type="button" id="logout_btn" title="Logg ut"><i class="bi bi-box-arrow-right"></i></button>
+                            <button class="btn btn-primary logged-user-name-btn" type="button" id="edit_user_btn" title="Endre bruker"><i class="bi bi-pencil-fill"></i></button>
+                            <button class="btn btn-danger logged-user-name-btn" type="button" id="logout_btn" title="Logg ut"><i class="bi bi-box-arrow-right"></i></button>
                         </form>
                     } else {
+                        <script type="text/javascript">
+                            @*Fallback incase session is dead on server, but not yet updated on client*@
+                            sessionToBeRemoved = true;
+                        </script>
                         <form id="login_form" class="d-flex">
                             <input class="form-control me-2" type="text" id="login_username" placeholder="Brukernavn" aria-label="Brukernavn" title="Brukernavn">
                             <input class="form-control me-2" type="password" id="login_password" placeholder="Passord" aria-label="Passord" title="Passord">
@@ -85,6 +94,26 @@
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
+
+            <!-- MAIN MODAL -->
+            <div id="my_main_modal" class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 id="modal_main_title" class="modal-title">
+                                <!-- TITLE -->
+                            </h5>
+                        </div>
+                        <div id="modal_main_content" class="modal-body">
+                            <!-- CONTENT -->
+                        </div>
+                        <div id="modal_main_footer" class="modal-footer">
+                            <!-- ACTION BUTTONS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -98,7 +127,10 @@
     <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
     <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
-
+    <script type="text/javascript">
+        // Fallback incase session is dead on server, but not yet updated on client
+        if (sessionToBeRemoved) { removeLocalStorageSession(); }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

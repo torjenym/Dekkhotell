@@ -1,4 +1,14 @@
-﻿$(document).ready(function () {
+﻿function setLocalStorageSession(username, token) {
+    localStorage.setItem('dekkHotellUsername', username);
+    localStorage.setItem('dekkHotellUserToken', token);
+}
+
+function removeLocalStorageSession() {
+    localStorage.removeItem('dekkHotellUserToken');
+    localStorage.removeItem('dekkHotellUsername');
+}
+
+$(document).ready(function () {
     function initLogin() {
         if ($("#login_btn").length <= 0) {
             return;
@@ -21,6 +31,10 @@
         $('#logout_btn').click(function () {
             logoutRequest();
         });
+        $("#edit_user_btn").unbind('click');
+        $('#edit_user_btn').click(function () {
+            editUser();
+        });
     }
 
     function loginRequest(userObj) {
@@ -33,17 +47,16 @@
                 if (data.success === undefined || data.success === null || data.success === false) {
                     $("#login_username").val('');
                     $("#login_password").val('');
-                    localStorage.removeItem('dekkHotellUserToken');
-                    localStorage.removeItem('dekkHotellUsername');
+                    removeLocalStorageSession();
                     alert("Failed to login!");
                     return;
                 }
-                localStorage.setItem('dekkHotellUserToken', data.token);
-                localStorage.setItem('dekkHotellUsername', data.username);
+                setLocalStorageSession(data.username, data.token);
                 window.location.reload();
             },
-            error: function () {
-                alert("Failed to request login data. Contact support ... Ring han Torje")
+            error: function (error) {
+                alert(error.responseText);
+                //alert("Failed to request login data. Contact support ... Ring han Torje")
             }
         });
     }
@@ -53,17 +66,41 @@
             type: "DELETE",
             url: "/api/v1/auth/logout",
             success: function (data) {
-                console.log(data)
                 if (data.success === undefined || data.success === null || data.success === false) {
                     alert("Failed to logout. Contact support ... Ring han Torje")
                     return;
                 }
-                localStorage.removeItem('dekkHotellUserToken');
-                localStorage.removeItem('dekkHotellUsername');
+                removeLocalStorageSession();
                 window.location.reload();
             },
             error: function () {
                 alert("Failed to request login data. Contact support ... Ring han Torje")
+            }
+        });
+    }
+
+    function updateUser(obj) {
+        if (localStorage.getItem('dekkHotellUserToken') == null) {
+            alert("No access!");
+            return;
+        }
+        $.ajax({
+            type: "PUT",
+            url: "/api/v1/user",
+            headers: { "Authorization": localStorage.getItem('dekkHotellUserToken') },
+            data: obj,
+            dataType: 'json',
+            success: function () {
+                $('#my_main_modal').modal('hide');
+            },
+            error: function (error) {
+                if (error.status === 401) {
+                    removeLocalStorageSession();
+                    alert("Session timeout. You need to login again");
+                    window.location.reload();
+                    return;
+                }
+                alert(error.responseText);
             }
         });
     }
@@ -80,9 +117,80 @@
         loginRequest(userObj);
     }
 
+    function editUser(id) {
+        $('#modal_main_title').empty();
+        let edit_user_header = 'Rediger bruker';
+        $('#modal_main_title').append(edit_user_header);
+
+        $('#modal_main_content').empty();
+        let edit_user_content = '<form>'
+            + '<div class="form-group row">'
+            + '<label for="old_password" class="col-sm-2 col-form-label">Gamle passord</label>'
+            + '<div class="col-sm-10">'
+            + '<input type="password" class="form-control" id="old_password" placeholder="Passord">'
+            + '</div>'
+            + '</br></br></br></br></br>'
+            + '<label for="new_password" class="col-sm-2 col-form-label">Nytt passord</label>'
+            + '<div class="col-sm-10">'
+            + '<input type="password" class="form-control" id="new_password" placeholder="Passord">'
+            + '</div>'
+            + '</br>'
+            + '<label for="new_password_2" class="col-sm-2 col-form-label">Gjenta nytt passord</label>'
+            + '<div class="col-sm-10">'
+            + '<input type="password" class="form-control" id="new_password_2" placeholder="Gjenta passord">'
+            + '</div></div>'
+
+            + '</form>';
+        $('#modal_main_content').append(edit_user_content);
+
+        $('#modal_main_footer').empty();
+        let edit_user_footer = '<button id="save_btn" type="button" class="btn btn-primary" data="' + id + '" title="Lagre data og lukk vindu"><i class="bi bi-save2"></i> Lagre</button>'
+            + '<button id="close_btn" type="button" class="btn btn-secondary" title="Lukk vindu uten å lagre"><i class="bi bi-x-lg"></i></button>';
+        $('#modal_main_footer').append(edit_user_footer);
+
+        editMainModalHandlers();
+        $('#my_main_modal').modal('show');
+    }
+
+    function editMainModalHandlers() {
+        $('#save_btn').unbind('click');
+        $('#save_btn').click(function () {
+            let object = {
+                oldPassword: $('#old_password').val(),
+                newPassword: $('#new_password').val(),
+                repeatPassword: $('#new_password_2').val()
+            };
+            if (object.oldPassword.length <= 3) {
+                alert('For kort passord');
+                return;
+            }
+            if (object.newPassword.length <= 3) {
+                alert('For kort passord');
+                return;
+            }
+            if (object.newPassword !== object.repeatPassword) {
+                alert('Passord matcher ikke');
+                return;
+            }
+            updateUser(object);
+        });
+        $('#close_btn').unbind('click');
+        $('#close_btn').click(function () {
+            $('#my_main_modal').modal('hide');
+        });
+    }
+
+    function modalStatic() {
+        $('#my_main_modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+    }
+
     function init() {
         initLogin();
         initLogout();
+        modalStatic();
     }
 
     init();

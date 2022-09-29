@@ -1,7 +1,9 @@
 ﻿using DekkHotell.Helpers;
 using DekkHotell.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using static System.Collections.Specialized.BitVector32;
 
 namespace DekkHotell.Controllers
 {
@@ -16,25 +18,56 @@ namespace DekkHotell.Controllers
         }
 
         [HttpPost, Route("login")]
-        public JsonResult Login(Login login)
+        public ActionResult Login(Login login)
         {
             if (login.Username == null || login.Username.Length <= 2)
             {
-                return Json(new AuthResponse() {  Success = false });
+                return BadRequest();//Json(new AuthResponse() {  Success = false });
             }
             if (login.Password == null || login.Password.Length <= 2)
             {
-                return Json(new AuthResponse() { Success = false });
+                return BadRequest(); //return Json(new AuthResponse() { Success = false });
             }
-            string password = m_config[$"Users:{login.Username.ToLower()}"];
-            if (password == null) 
+
+            var mUsersConfig = new UsersConfig();
+            try
             {
-                return Json(new AuthResponse() { Success = false });
+                string fileName = "users.json";
+                string path = Path.Combine(Environment.CurrentDirectory, @"Data\", @"Json\", fileName);
+
+                using (StreamReader r = new(path))
+                {
+                    string json = r.ReadToEnd();
+                    var result = JsonConvert.DeserializeObject<UsersConfig>(json);
+                    if (result != null)
+                    {
+                        mUsersConfig = result;
+                    }
+                }
             }
-            if (login.Password != password)
+            catch
             {
-                return Json(new AuthResponse() { Success = false });
+                return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 302");
+                // TODO propper return
+                //return Json(new AuthResponse() { Success = false });
             }
+
+            bool found = false;
+            if (mUsersConfig.Users != null && mUsersConfig.Users.Listed != null) {
+                foreach (var user in mUsersConfig.Users.Listed)
+                {
+                    if (user.Username == login.Username.ToLower())
+                    {
+                        if (user.Password == login.Password)
+                        {
+                            found = true;
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            if (!found) { return BadRequest("Feil brukernavn og/eller passord"); }
 
             try
             {
@@ -49,7 +82,8 @@ namespace DekkHotell.Controllers
                 return Json(new AuthResponse() { Success = true, Username = auth.Username, Token = auth.Token });
             } catch
             {
-                return Json(new AuthResponse() { Success = false });
+                return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 301");
+                //return Json(new AuthResponse() { Success = false });
             }
         }
 

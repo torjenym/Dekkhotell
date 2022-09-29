@@ -1,8 +1,7 @@
 ﻿let tireHotel;
 let tireSetTable;
+let availableLocationsList = [];
 $(document).ready(function () {
-    let dekkHotellUserToken = localStorage.getItem('dekkHotellUserToken');
-
     // https://datatables.net/examples/styling/bootstrap5.html
     function initDekkHotell() {
         tireSetTable = $('#dekkhotell_table').DataTable({
@@ -31,28 +30,47 @@ $(document).ready(function () {
                 }
             ],
             columnDefs: [
-                { "className": "dt-center", "targets": 0 }, // "_all"
                 {
-                    targets: [0], render: function (a, b, data, d) {
-                        console.log();
-                        if (data.regNr !== null && data.regNr !== '') {
-                            return a + ' <i class="bi bi-lock location-taken"></i>';
+                    targets: [0], render: function (a, b, data) {
+                        if (data.regNr !== null) {
+                            return '<i class="bi bi-lock location-taken"></i>' + a;
+                        }
+                        return a;
+                    },
+                    className: "dt-center"
+                },
+                {
+                    targets: [5], render: function (data) {
+                        if (data !== null && data !== '') {
+                            return '<a href = "mailto:' + data + '">' + data + '</a>';
+                        }
+                        return data;
+                    },
+                },
+                {
+                    targets: [6], render: function (a, b, data) {
+                        if (a && a.length >= 28) {
+                            return '<button type="button" class="btn btn-primary btn-sm read-note-btn" title="Les hele notat" data="' + data.id + '"><i class="bi bi-book"></i></button> ' + a;
                         }
                         return a;
                     }
+                },
+                {
+                    targets: [9],
+                    className: "dt-center"
                 }
             ],
             error: function () {
                 alert("Failed loading data. Contact support ... Ring han Torje")
             },
-            fnInitComplete: function (settings, json) {
+            fnInitComplete: function (a, json) {
                 loadedTableSetup(json);
             }
         });
     }
 
     function updateDekkHotell(obj) {
-        if (dekkHotellUserToken == null) {
+        if (localStorage.getItem('dekkHotellUserToken') == null) {
             alert("No access!");
             return;
         }
@@ -66,17 +84,17 @@ $(document).ready(function () {
                 tireSetTable.ajax.reload(function (json) {
                     loadedTableSetup(json);
                 });
-                $('#my_modal').modal('hide');
+                $('#my_tiresets_modal').modal('hide');
             },
             error: function (error) {
                 if (error.status === 401) {
-                    localStorage.removeItem('dekkHotellUserToken');
-                    localStorage.removeItem('dekkHotellUsername');
+                    removeLocalStorageSession();
                     alert("Session timeout. You need to login again");
                     window.location.reload();
                     return;
                 }
-                alert("Failed saving data. Contact support ... Ring han Torje")
+                alert(error.responseText);
+                //alert("Failed saving data. Contact support ... Ring han Torje")
             }
         });
     }
@@ -84,31 +102,50 @@ $(document).ready(function () {
     function loadedTableSetup(json) {
         tireHotel = json.data;
         editButtonHandler();
+        readButtonHandler();
+        setDekkhotellExtraInfo();
     }
 
-    function getEditButton(d, t, row) {
-        if (dekkHotellUserToken) {
-            return '<button type="button" class="btn btn-primary btn-sm edit-btn" data=' + row.id + ' title="Rediger lokasjon">'
-                + '<i class="bi bi-pencil-fill"></i></svg></button>';
+    function setDekkhotellExtraInfo() {
+        availableLocationsList = [];
+        for (var i = 0; i < tireHotel.length; i++) {
+            if (tireHotel[i].regNr === null) {
+                availableLocationsList.push({ id: tireHotel[i].id, lokasjon: tireHotel[i].lokasjon })
+            }
         }
-        return '<button type="button" class="btn btn-secondary btn-sm edit-btn" data=' + row.id + ' title="Rediger lokasjon" disabled>'
-            + '<i class="bi bi-pencil-fill"></i></svg></button>';
+        $('#dekkhotell_extra_info').empty();
+        $('#dekkhotell_extra_info').append('Ledige plasser: ' + availableLocationsList.length); 
+    }
+
+    function getEditButton(a, b, row) {
+        if (localStorage.getItem('dekkHotellUserToken')) {
+            return '<button type="button" class="btn btn-primary btn-sm edit-btn" data=' + row.id + ' title="Rediger lokasjon">'
+                + '<i class="bi bi-pencil-fill"></i></button>'; // </svg>
+        }
+        return '<button type="button" class="btn btn-secondary btn-sm edit-btn" data=' + row.id + ' title="Logg inn for å redigere lokasjon" disabled>'
+            + '<i class="bi bi-pencil-fill"></i></button>'; // </svg>
     }
 
     // https://getbootstrap.com/docs/4.0/components/forms/
     // https://stackoverflow.com/questions/16152073/prevent-bootstrap-modal-from-disappearing-when-clicking-outside-or-pressing-esca
     function editLocation(id) {
-        $('#modal_title').empty();
-        let header = '';
-        $('#modal_title').append(header);
+        $('#modal_tiresets_title').empty();
+        let edit_location_header = 'Rediger lokasjon';
+        $('#modal_tiresets_title').append(edit_location_header);
 
-        $('#modal_content').empty();
-        let content = '<form>'
+        $('#modal_tiresets_content').empty();
+        let edit_location_content = '<form>'
             + '<div class="form-group row">'
             + '<label for="lokasjon" class="col-sm-2 col-form-label">Lokasjon</label>'
             + '<div class="col-sm-10">'
             + '<input type="text" class="form-control" id="lokasjon" placeholder="Lokasjon" value="' + getObjectValueOrEmptyString(tireHotel[id].lokasjon) + '" readonly>'
             + '</div>'
+            //+ '<div class="col-sm-7">'
+            //+ '<input type="text" class="form-control" id="lokasjon" placeholder="Lokasjon" value="' + getObjectValueOrEmptyString(tireHotel[id].lokasjon) + '" readonly>'
+            //+ '</div>'
+            //+ '<div class="col-sm-3">'
+            //+ '<button id="move_tireset_btn" type="button" class="btn btn-secondary" data="' + id + '">Flytt</button>'
+            //+ '</div>'
             + '</div>'
             + '</br>'
 
@@ -172,26 +209,90 @@ $(document).ready(function () {
             + '<div class="col-sm-10">'
             + '<textarea type="text" class="form-control" id="notat" placeholder="Notat" rows="3">' + getObjectValueOrEmptyString(tireHotel[id].notat) + '</textarea>'
             + '</div>'
-            + '</div>'
+            + '</div>';
 
-            + '</form>';
-        $('#modal_content').append(content);
+        if (tireHotel[id].forfatter || tireHotel[id].forrigeVersjon) {
+            edit_location_content += '</br></br>'
+            + '<p>Siste endret av: ' + getObjectValueOrEmptyString(tireHotel[id].forfatter) + '</p>'
+            + '<p>Forrige versjon: <small><code>' + JSON.stringify(getObjectValueOrEmptyStringFromLastVersion(tireHotel[id].forrigeVersjon)) + '</code></small></p>'
+        }
+        edit_location_content += '</form>';
+        $('#modal_tiresets_content').append(edit_location_content);
 
-        $('#modal_footer').empty();
-        let footer = '<button id="reset_btn" type="button" class="btn btn-warning me-auto" data="' + id + '" title="Tilbakestill felter til opprinnelig data"><i class="bi bi-rewind"></i></button>'
+        $('#modal_tiresets_footer').empty();
+        let edit_location_footer = '<button id="reset_btn" type="button" class="btn btn-warning me-auto" data="' + id + '" title="Tilbakestill felter til opprinnelig data"><i class="bi bi-rewind"></i></button>'
             + '<button id="empty_btn" type="button" class="btn btn-danger me-auto" data="' + id + '" title="Nullstill alle felter"><i class="bi bi-trash"></i></button>'
             + '<button id="save_btn" type="button" class="btn btn-primary" data="' + id + '" title="Lagre data og lukk vindu"><i class="bi bi-save2"></i> Lagre</button>'
             + '<button id="close_btn" type="button" class="btn btn-secondary" title="Lukk vindu uten å lagre"><i class="bi bi-x-lg"></i></button>';
-        $('#modal_footer').append(footer);
+        $('#modal_tiresets_footer').append(edit_location_footer);
 
-        editModalHandlers();
-        $('#my_modal').modal('show');
+        editTiresetModalHandlers();
+        $('#my_tiresets_modal').modal('show');
+    }
+
+    //function moveLocationHandler(id) {
+    //    // id not in use
+    //    let html = '<select name="lokasjon" id="lokasjon" class="btn btn-primary">';
+    //    html += '<option value="' + tireHotel[id].lokasjon + '">Uendret: ' + tireHotel[id].lokasjon + '</option>'
+    //    $.each(availableLocationsList, function (i, v) {
+    //        html += '<option value="' + v.id + '">' + v.lokasjon + '</option>'
+    //    });
+    //    html += '</select>';
+    //    $('#lokasjon').replaceWith(html);
+    //    $('#lokasjon').unbind('change');
+    //    $('#lokasjon').change(function () {
+    //        tireHotel[id] = emptyLocation();
+    //        console.log('changed!');
+    //        let oldEmpty = tireHotel[$('#lokasjon').find(":selected").val()];
+    //        let newHolding = tireHotel[id];
+    //        let oldLocation = newHolding.lokasjon;
+    //        let newLocation = oldEmpty.lokasjon;
+
+    //        newHolding.lokasjon = newLocation;
+    //        oldEmpty.lokasjon = oldLocation;
+    //        tireHotel[id] = oldEmpty;
+    //        tireHotel[$('#lokasjon').find(":selected").val()] = newHolding;
+    //        tireHotel[$('#lokasjon').find(":selected").val()] = tireHotel[id];
+    //        // lokasjon
+    //        console.log(id);
+    //    });
+    //}
+
+    function emptyLocation() {
+
+    }
+
+    function readNote(id) {
+        $('#modal_tiresets_title').empty();
+        let note_header = 'Notat';
+        $('#modal_tiresets_title').append(note_header);
+
+        $('#modal_tiresets_content').empty();
+        let note_content = '<p>' + getObjectValueOrEmptyString(tireHotel[id].notat) + '</p>';
+        $('#modal_tiresets_content').append(note_content);
+
+        $('#modal_tiresets_footer').empty();
+        let note_footer = '<button id="close_btn" type="button" class="btn btn-secondary" title="Lukk vindu"><i class="bi bi-x-lg"></i></button>';
+        $('#modal_tiresets_footer').append(note_footer);
+
+        readNoteModalHandlers();
+        $('#my_tiresets_modal').modal('show');
     }
 
     function getObjectValueOrEmptyString(value) {
         if (value === undefined || value === null) {
             return '';
         }
+        return value;
+    }
+
+    function getObjectValueOrEmptyStringFromLastVersion(value) {
+        if (value === undefined || value === null) {
+            return '';
+        }
+        delete value.id;
+        delete value.avtale;
+        delete value.betalt;
         return value;
     }
 
@@ -205,7 +306,19 @@ $(document).ready(function () {
         }
     }
 
-    function editModalHandlers() {
+    function readButtonHandler() {
+        $('.read-note-btn').unbind('click');
+        $('.read-note-btn').click(function () {
+            let id = $(this).attr('data');
+            readNote(id);
+        });
+    }
+
+    function editTiresetModalHandlers() {
+        //$('#move_tireset_btn').unbind('click');
+        //$('#move_tireset_btn').click(function () {
+        //    moveLocationHandler($(this).attr('data'));
+        //});
         $('#reset_btn').unbind('click');
         $('#reset_btn').click(function () {
             editLocation($(this).attr('data'));
@@ -236,12 +349,19 @@ $(document).ready(function () {
         });
         $('#close_btn').unbind('click');
         $('#close_btn').click(function () {
-            $('#my_modal').modal('hide');
+            $('#my_tiresets_modal').modal('hide');
         });
     }
 
-    function modalStatic() {
-        $('#my_modal').modal({
+    function readNoteModalHandlers() {
+        $('#close_btn').unbind('click');
+        $('#close_btn').click(function () {
+            $('#my_tiresets_modal').modal('hide');
+        });
+    }
+
+    function modalTiresetStatic() {
+        $('#my_tiresets_modal').modal({
             backdrop: 'static',
             keyboard: false
         });
@@ -249,7 +369,7 @@ $(document).ready(function () {
 
     function init() {
         initDekkHotell();
-        modalStatic();
+        modalTiresetStatic();
     }
 
     init();

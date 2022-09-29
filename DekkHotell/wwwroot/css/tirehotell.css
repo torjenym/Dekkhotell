@@ -1,12 +1,26 @@
-﻿table.dataTable > tbody > tr.even-row {
+﻿/*table.dataTable {
+    width: 100%;
+}
+*/
+table.dataTable > tbody > tr.even-row {
     background-color: #e6e6e6;
 }
 #dekkhotell_table {
     /*border: 5px solid blue;*/
 }
 .location-taken {
-    float: right;
-    padding-right: 12px;
-    width: 0;
+    /*position: relative;*/
+    float: left;
     color: red;
 }
+table tr td:nth-child(7) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+}
+/*.table-note {
+    overflow-x: scroll;*/ /* this is what fixes the expansion */
+    /*text-overflow: ellipsis;*/ /* not supported in all browsers, but I accepted the tradeoff */
+    /*white-space: nowrap;
+}*/

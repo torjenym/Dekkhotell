@@ -1,0 +1,58 @@
+{
+  "Users": {
+    "Listed": [
+      {
+        "Username": "børge",
+        "Password": "1234"
+      },
+      {
+        "Username": "frode",
+        "Password": "1234"
+      },
+      {
+        "Username": "hege",
+        "Password": "1234"
+      },
+      {
+        "Username": "henrik",
+        "Password": "1234"
+      },
+      {
+        "Username": "kim",
+        "Password": "1234"
+      },
+      {
+        "Username": "kjell",
+        "Password": "1234"
+      },
+      {
+        "Username": "laszlo",
+        "Password": "1234"
+      },
+      {
+        "Username": "lisa",
+        "Password": "1234"
+      },
+      {
+        "Username": "morten",
+        "Password": "1234"
+      },
+      {
+        "Username": "ole",
+        "Password": "1234"
+      },
+      {
+        "Username": "reiel",
+        "Password": "1234"
+      },
+      {
+        "Username": "robin",
+        "Password": "1234"
+      },
+      {
+        "Username": "torje",
+        "Password": "1234"
+      }
+    ]
+  }
+}
