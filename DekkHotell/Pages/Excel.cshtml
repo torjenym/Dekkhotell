@@ -1,0 +1,190 @@
+﻿@page
+@model ExcelModel
+<link rel="stylesheet" type="text/css" href="~/css/excel.css" asp-append-version="true" />
+@{
+    ViewData["Title"] = "Excel";
+}
+@section Scripts
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="~/js/excel.js" asp-append-version="true"></script>
+}
+
+<div>
+    <h3 class="display-4">Excel <small><small><small>- slå sammen excelfiler</small></small></small></h3>
+    <br />
+
+    <input type="file" id="file-upload-one" class="btn btn-secondary" />
+    <input type="button" id="upload-one" value="Last opp" class="btn btn-primary" onclick="fileUpload(1)" />
+    <br />
+    <div id="dv-excel-one"></div>
+    <hr />
+    <input type="file" id="file-upload-two" class="btn btn-secondary" />
+    <input type="button" id="upload-two" value="Last opp" class="btn btn-primary" onclick="fileUpload(2)" />
+    <br />
+    <div id="dv-excel-two"></div>
+    <br /><br />
+    <input type="button" id="merge-files" class="btn btn-primary" onclick="fileMerge()" value="Slå sammen filer og last ned" />
+    <br /><br />
+    <hr />
+    <br />
+    <div style="border: 2px solid gray; border-radius: 4px; padding: 12px;">
+        <h5>TIPS OG FORKLARING</h5>
+        <ul>
+            <li>Velg filer du ønsker å benytte</li>
+            <li>Last opp filene</li>
+            <li>Velg kolonner det skal slåes sammen på</li>
+            <li>Trykk på "Slå sammen filer og last ned"</li>
+        </ul>
+        <p>Verdier vi slår sammen på, må være unike.</p>
+        <br />
+        <h5>EXCEL FIL A</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tittel 1</th>
+                    <th>Tittel 2</th>
+                    <th>Tittel 3</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>lorem ipsum</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>dolor sit amet</td>
+                    <td>456</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>consectetur adipiscing </td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td>888</td>
+                    <td>f32</td>
+                    <td>432</td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <h5>EXCEL FIL B</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tittel 4</th>
+                    <th>Tittel 5</th>
+                    <th>Tittel 6</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>3</td>
+                    <td>342</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>a12s</td>
+                    <td>956</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td></td>
+                    <td>7657</td>
+                </tr>
+                <tr>
+                    <td>999</td>
+                    <td>f32</td>
+                    <td>3466</td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <h5>RESULTAT</h5>
+        <p>
+            Gitt vi velger slå sammen på excel A "Tittel 1" og excel B "Tittel 4"
+            <br />
+            <span>
+                <small>* Grunnen for endring i titler, er for å unngå at like titler går i bena på hverandre under sammenslåing</small>
+            </span>
+        </p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tittel 1--A--XXX</th>
+                    <th>Tittel 2--A--YYY</th>
+                    <th>Tittel 3--A--ZZZ</th>
+                    <th>Tittel 4--B--XXX</th>
+                    <th>Tittel 5--B--YYY</th>
+                    <th>Tittel 6--B--ZZZ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>lorem ipsum</td>
+                    <td>123</td>
+                    <td>1</td>
+                    <td>a12s</td>
+                    <td>956</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>dolor sit amet</td>
+                    <td>456</td>
+                    <td>2</td>
+                    <td></td>
+                    <td>7657</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>consectetur adipiscing</td>
+                    <td>123</td>
+                    <td>3</td>
+                    <td>342</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>888</td>
+                    <td>f32</td>
+                    <td>432</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>999</td>
+                    <td>f32</td>
+                    <td>3466</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="my_excel_modal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="modal_excel_title" class="modal-title">
+                        <!-- TITLE -->
+                    </h5>
+                </div>
+                <div id="modal_excel_content" class="modal-body">
+                    <!-- CONTENT -->
+                </div>
+                <div id="modal_excel_footer" class="modal-footer">
+                    <!-- ACTION BUTTONS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
