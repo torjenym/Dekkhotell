@@ -43,18 +43,19 @@ tlf
 * Bytte lokasjon ved redigering
 * DONE Oversettelse datatable
 * DONE Info blokk: Ledige plasser o.l.
-* Datatable overflow --> kollapse med hover visning
+* DONE Datatable overflow --> kollapse med hover visning
 * Backup. mndtlig eller ved intervall ved bruk. Inntil videre håndtert med random
 * DONE Datatypes i tabell. epost og tlf med direktelink
 * Facelift
 * json --> database
 * Sette feltkrav: RegNr, navn, tlf ???
-* darkmode
+* darkmode; utkommentert atm
 * skjul personalia ved manglende innlogging ???
 * modell dekkhotell ???
 * portal landingsside. på sikt
 * DONE split opp sessionshåndtering. globalt tilgjengelig
 * DONE endre personlig passord / pin
+* BlåBok - partial
 
 https://icons.getbootstrap.com/icons/door-open/
 https://getbootstrap.com/docs/5.2/components/navbar/
