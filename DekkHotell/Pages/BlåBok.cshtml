@@ -1,0 +1,203 @@
+﻿@page
+@model BlaBokModel
+<link rel="stylesheet" type="text/css" href="~/css/blabok.css" asp-append-version="true" />
+@{
+    ViewData["Title"] = "BlåBok";
+}
+@section Scripts
+{
+    <script type="text/javascript" src="~/js/blabok.js" asp-append-version="true"></script>
+}
+
+<div>
+    <h3 class="display-4">BlåBok</h3>
+    @if (@Model.Authorization != null && @Model.Authorization.Username != null) {
+    <div class="container">
+        <div class="row justify-content-end">
+            <div class="col-6 col-lg-2 col-sm-4">
+                <p>
+                    <button type="button" class="btn btn-primary" onclick="newBlaBokEntry()">Ny oppføring</button>
+                </p>
+            </div>
+        </div>
+    </div>
+    }
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-4 col-lg-2 col-sm-3">
+                <button type="button" id="next-year" class="btn btn-secondary btn-sm float-end" onclick="changeBlaBokYear(-1)"><i class="bi bi-arrow-left"></i></button>
+                <button type="button" id="next-year" class="btn btn-secondary btn-sm float-end me-1" onclick="changeBlaBokYear(-5)"><i class="bi bi-arrow-left"></i><i class="bi bi-arrow-left"></i></button>
+            </div>
+            <div class="col-3 col-lg-1 col-sm-2" style="text-align: center;">
+                <h4 id="selected-blabok-year"></h4>
+            </div>
+            <div class="col-4 col-lg-2 col-sm-3">
+                <button type="button" id="next-year" class="btn btn-secondary btn-sm float-start" onclick="changeBlaBokYear(1)"><i class="bi bi-arrow-right"></i></button>
+                <button type="button" id="next-year" class="btn btn-secondary btn-sm float-start ms-1" onclick="changeBlaBokYear(5)"><i class="bi bi-arrow-right"></i><i class="bi bi-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+    <div>
+        Skjul/vis kolonner: <a class="toggle-vis" data-column="0">Nr.</a> - <a class="toggle-vis" data-column="1">Inn</a> - <a class="toggle-vis" data-column="2">Reg.nr.</a> - <a class="toggle-vis" data-column="3">Type</a> - <a class="toggle-vis" data-column="4">År</a> - <a class="toggle-vis" data-column="5">Km</a>
+        - <a class="toggle-vis hidden-column" data-column="6">Selger</a> - <a class="toggle-vis" data-column="7">Ny</a> - <a class="toggle-vis" data-column="8">Forrige</a> - <a class="toggle-vis" data-column="9">Innpris</a> - <a class="toggle-vis" data-column="10">Utpris</a> - <a class="toggle-vis hidden-column" data-column="11">Innbytte</a>
+        - <a class="toggle-vis hidden-column" data-column="12">Garanti</a> - <a class="toggle-vis hidden-column" data-column="13">N.nr.</a> - <a class="toggle-vis hidden-column" data-column="14">Rediger</a>
+    </div>
+    <br/>
+    <table id="blabok_table" class="table table-bordered nowrap" style="width:100%">
+        @*table-striped*@
+        <thead>
+            <tr>
+                <th title="bruktbilnr.">Nr.</th>
+                <th title="Inn dato">Inn</th>
+                <th title="Reg.nr.">Reg.nr.</th>
+                <th title="Biltype">Type</th>
+                <th title="Årsmodell">År</th>
+                <th>Km</th>
+                <th>Selger</th>
+                <th title="Ny eier">Ny</th>
+                <th title="Tidligere eier">Forrige</th>
+                <th>Innpris</th>
+                <th>Utpris</th>
+                <th>Innbytte</th>
+                <th>Garanti</th>
+                <th title="Nøkkel nr.">N.nr.</th>
+                <th title="Rediger BlåBok-oppføring">Rediger</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th title="bruktbilnr.">Nr.</th>
+                <th title="Inn dato">Inn</th>
+                <th title="Reg.nr.">Reg.</th>
+                <th title="Biltype">Type</th>
+                <th title="Årsmodell">År</th>
+                <th>Km</th>
+                <th>Selger</th>
+                <th title="Ny eier">Ny</th>
+                <th title="Tidligere eier">Forrige</th>
+                <th>Innpris</th>
+                <th>Utpris</th>
+                <th>Innbytte</th>
+                <th>Garanti</th>
+                <th title="Nøkkel nr.">N.nr.</th>
+                <th title="Rediger BlåBok-oppføring">Rediger</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div id="my_blabok_new_entry_modal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="modal_blabok_new_entry_title" class="modal-title">
+                        Ny oppføring
+                    </h5>
+                </div>
+                <div id="modal_blabok_new_entry_content" class="modal-body">
+                    <form>
+                        <div class="form-group row">
+                            <label for="inndato" class="col-sm-3 col-form-label form-control-sm">Inn dato</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="inndato" placeholder="Inn dato">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="regnr" class="col-sm-3 col-form-label form-control-sm">Reg.nr.</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="regnr" placeholder="Reg.nr.">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="biltype" class="col-sm-3 col-form-label form-control-sm">BilType</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="biltype" placeholder="BilType">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="arsmodell" class="col-sm-3 col-form-label form-control-sm">Årsmodell</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control form-control-sm" id="arsmodell" placeholder="Årsmodell">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="km" class="col-sm-3 col-form-label form-control-sm">Km</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control form-control-sm" id="km" placeholder="Km">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="selger" class="col-sm-3 col-form-label form-control-sm">Selger</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="selger" placeholder="Selger">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="nyeier" class="col-sm-3 col-form-label form-control-sm">Ny eier</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="nyeier" placeholder="Ny eier">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="forrigeeier" class="col-sm-3 col-form-label form-control-sm">Tidligere eier</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="forrigeeier" placeholder="Tidligere eier">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="innpris" class="col-sm-3 col-form-label form-control-sm">Innpris</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control form-control-sm" id="innpris" placeholder="Innpris">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="utpris" class="col-sm-3 col-form-label form-control-sm">Utpris</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control form-control-sm" id="utpris" placeholder="Utpris">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="innbytte" class="col-sm-3 col-form-label form-control-sm">Innbytte</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="innbytte" placeholder="Innbytte">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="garanti" class="col-sm-3 col-form-label form-control-sm">Garanti</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="garanti" placeholder="Garanti">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="nokkelnr" class="col-sm-3 col-form-label form-control-sm">Nøkkel nr.</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control form-control-sm" id="nokkelnr" placeholder="Nøkkel nr.">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="modal_blabok_new_entry_footer" class="modal-footer">
+                    <button id="save_btn" type="button" class="btn btn-primary" title="Lagre data og lukk vindu"><i class="bi bi-save2"></i> Lagre</button>
+                    <button id="close_btn" type="button" class="btn btn-secondary" title="Lukk vindu uten å lagre"><i class="bi bi-x-lg"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="my_blabok_modal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="modal_blabok_title" class="modal-title">
+                        <!-- TITLE -->
+                    </h5>
+                </div>
+                <div id="modal_blabok_content" class="modal-body">
+                    <!-- CONTENT -->
+                </div>
+                <div id="modal_blabok_footer" class="modal-footer">
+                    <!-- ACTION BUTTONS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

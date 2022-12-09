@@ -1,0 +1,7 @@
+﻿.toggle-vis:hover {
+    cursor: pointer;
+}
+a.hidden-column {
+    color: gray;
+    text-decoration: none;
+}

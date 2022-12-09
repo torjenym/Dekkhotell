@@ -11,6 +11,31 @@ namespace DekkHotell.Controllers
     [Route("api/v1/user")]
     public class UserController : Controller
     {
+        [HttpGet, Route("seller")]
+        public JsonResult GetSellers()
+        {
+            try
+            {
+                string fileName = "sellers.json";
+                string path = Path.Combine(Environment.CurrentDirectory, @"Data\", @"Json\", fileName);
+
+                using (StreamReader r = new(path))
+                {
+                    string json = r.ReadToEnd();
+                    var result = JsonConvert.DeserializeObject<Sellers>(json);
+                    if (result != null)
+                    {
+                        return Json(result);
+                    }
+                    return Json(new Sellers { Data = new List<Seller>() });
+                }
+            }
+            catch
+            {
+                return Json(new Sellers { Data = new List<Seller>() });
+            }
+        }
+
         [HttpPut, Route("")]
         public ActionResult UpdateUser(MyUser myUser)
         {
