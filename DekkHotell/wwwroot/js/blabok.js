@@ -152,6 +152,12 @@ function updateBlaBokRecord(obj) {
         alert("Krever Inn dato og Reg.nr. for å lagre oppføring i BlåBok");
         return;
     }
+    var dateFormated = stringDateToCSharpDateTime(obj.innDato);
+    if (dateFormated == null) {
+        alert("Feil med datoformat!");
+        return;
+    }
+    obj.innDato = dateFormated.toJSON();
     executeUpdateBlaBokRecord(obj);
 }
 
@@ -217,11 +223,25 @@ function modalBlaBokStatic() {
     });
 }
 
+function stringDateToCSharpDateTime(date) {
+    var splitted = date.split('.');
+    if (splitted.length != 3) {
+        return null;
+    }
+    return new Date(splitted[2], (parseInt(splitted[1]) - 1), splitted[0], 12, 0, 0, 0, 0);
+}
+
 function executeCreateNewBlaBokRecord(obj) {
     if (localStorage.getItem('dekkHotellUserToken') == null) {
         alert("No access!");
         return;
     }
+    var dateFormated = stringDateToCSharpDateTime(obj.innDato);
+    if (dateFormated == null) {
+        alert("Feil med datoformat!");
+        return;
+    }
+    obj.innDato = dateFormated.toJSON();
     $.ajax({
         type: "POST",
         url: "/api/v1/blabok/",
