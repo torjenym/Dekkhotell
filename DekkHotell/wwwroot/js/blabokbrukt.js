@@ -1,6 +1,6 @@
 ﻿let blaBokData;
 let blaBokTable;
-let cachedNewCarColumns;
+let cachedUsedCarColumns;
 let selectedYear;
 let searchNr;
 let currentSelectedRecordNr;
@@ -30,7 +30,7 @@ function emptyBlaBokEntryForm() {
     $('#km').val('');
     $('#selger').val('');
     $('#nyeier').val('');
-    //$('#forrigeeier').val('');
+    $('#forrigeeier').val('');
     $('#innpris').val('');
     $('#utpris').val('');
     $('#innbytte').val('');
@@ -54,7 +54,7 @@ function newBlaBokEntryModalHandlers() {
         object.km = $('#km').val();
         object.selger = $('#selger').val();
         object.nyEier = $('#nyeier').val();
-        //object.forrigeEier = $('#forrigeeier').val();
+        object.forrigeEier = $('#forrigeeier').val();
         object.innpris = $('#innpris').val();
         object.utpris = $('#utpris').val();
         object.innbytte = $('#innbytte').val();
@@ -111,7 +111,7 @@ function fetchDataAndUpdate(searchNr) {
     object.km = $('#km').val();
     object.selger = $('#selger').val();
     object.nyEier = $('#nyeier').val();
-    //object.forrigeEier = $('#forrigeeier').val();
+    object.forrigeEier = $('#forrigeeier').val();
     object.innpris = $('#innpris').val();
     object.utpris = $('#utpris').val();
     object.innbytte = $('#innbytte').val();
@@ -140,7 +140,7 @@ function populateBlaBokEntryFormWithExistingData(nr) {
     $('#arsmodell').val(existingBlaBokEntry.arsmodell);
 
     let solgtDate = getDateWithLeadingZeros(existingBlaBokEntry.solgt);
-    if (solgtDate !== null && solgtDate  !== '01.01.1970') {
+    if (solgtDate !== null && solgtDate !== '01.01.1970') {
         $("#solgt").datepicker('setDate', solgtDate);
     } else {
         $("#solgt").datepicker('setDate', null);
@@ -148,7 +148,7 @@ function populateBlaBokEntryFormWithExistingData(nr) {
     $('#km').val(existingBlaBokEntry.km);
     $('#selger').val(existingBlaBokEntry.selger);
     $('#nyeier').val(existingBlaBokEntry.nyEier);
-    //$('#forrigeeier').val(existingBlaBokEntry.forrigeEier);
+    $('#forrigeeier').val(existingBlaBokEntry.forrigeEier);
     $('#innpris').val(existingBlaBokEntry.innpris);
     $('#utpris').val(existingBlaBokEntry.utpris);
     $('#innbytte').val(existingBlaBokEntry.innbytte);
@@ -197,7 +197,7 @@ function updateSolgtBlaBokEntry(nr) {
     }
 
     let today = getDateWithLeadingZeros(new Date().toISOString());
-    
+
     let object = {};
     object.nr = searchNr;
     object.innDato = getDateWithLeadingZeros(existingBlaBokEntry.innDato);
@@ -208,7 +208,7 @@ function updateSolgtBlaBokEntry(nr) {
     object.km = existingBlaBokEntry.km;
     object.selger = existingBlaBokEntry.selger;
     object.nyEier = existingBlaBokEntry.nyEier;
-    //object.forrigeEier = existingBlaBokEntry.forrigeEier;
+    object.forrigeEier = existingBlaBokEntry.forrigeEier;
     object.innpris = existingBlaBokEntry.innpris;
     object.utpris = existingBlaBokEntry.utpris;
     object.innbytte = existingBlaBokEntry.innbytte;
@@ -263,11 +263,6 @@ function changeBlaBokYear(number) {
     let urlParams = new URLSearchParams();
     urlParams.set('year', selectedYear);
     window.location.search = urlParams;
-    //setSelectedYearBox();
-    //blaBokTable.ajax.url("/api/v1/blabok?year=" + selectedYear);
-    //blaBokTable.ajax.reload(function (json) {
-    //    loadedBlaBokTableSetup(json);
-    //});
 }
 
 function modalBlaBokStatic() {
@@ -308,13 +303,13 @@ function executeCreateNewBlaBokRecord(obj) {
 
     $.ajax({
         type: "POST",
-        url: "/api/v1/blabok/",
+        url: "/api/v1/blabokbrukt/",
         headers: { "Authorization": localStorage.getItem('dekkHotellUserToken') },
         data: obj,
         dataType: 'json',
         success: function () {
             alert("Oppføring lagret!");
-            blaBokTable.ajax.url("/api/v1/blabok?year=" + selectedYear);
+            blaBokTable.ajax.url("/api/v1/blabokbrukt?year=" + selectedYear);
             blaBokTable.ajax.reload(function (json) {
                 loadedBlaBokTableSetup(json);
             });
@@ -340,13 +335,13 @@ function executeUpdateBlaBokRecord(obj) {
     }
     $.ajax({
         type: "PUT",
-        url: "/api/v1/blabok/" + obj.nr,
+        url: "/api/v1/blabokbrukt/" + obj.nr,
         headers: { "Authorization": localStorage.getItem('dekkHotellUserToken') },
         data: obj,
         dataType: 'json',
         success: function () {
             alert("Oppføring er oppdatert!");
-            blaBokTable.ajax.url("/api/v1/blabok?year=" + selectedYear);
+            blaBokTable.ajax.url("/api/v1/blabokbrukt?year=" + selectedYear);
             blaBokTable.ajax.reload(function (json) {
                 loadedBlaBokTableSetup(json);
             });
@@ -397,7 +392,7 @@ function initBlaBok() {
 
     blaBokTable = $('#blabok_table').DataTable({
         type: "GET",
-        ajax: "/api/v1/blabok?year=" + selectedYear,
+        ajax: "/api/v1/blabokbrukt?year=" + selectedYear,
         stripeClasses: ['odd-row', 'even-row'],
         language: {
             url: 'json/datatables_no.json'
@@ -408,6 +403,7 @@ function initBlaBok() {
             , { data: "innDato" }
             , { data: "regNr" }
             , { data: "bilType" }
+
             , {
                 mData: "Solgt",
                 mRender: function (data, type, row, index) {
@@ -418,7 +414,7 @@ function initBlaBok() {
             , { data: "km" }
             , { data: "selger" }
             , { data: "nyEier" }
-            //, { data: "forrigeEier" }
+            , { data: "forrigeEier" }
             , { data: "innpris" }
             , { data: "utpris" }
             , { data: "innbytte" }
@@ -434,7 +430,7 @@ function initBlaBok() {
         columnDefs: [
             {
                 targets: [0],
-                visible: cachedNewCarColumns["1"],
+                visible: cachedUsedCarColumns["1"],
             },
             {
                 targets: [1], render: function (data) {
@@ -444,25 +440,25 @@ function initBlaBok() {
                 },
                 className: "dt-center",
                 type: 'extract-date',
-                visible: cachedNewCarColumns["2"],
+                visible: cachedUsedCarColumns["2"],
             },
             {
                 targets: [2],
-                visible: cachedNewCarColumns["3"],
+                visible: cachedUsedCarColumns["3"],
             },
             {
                 targets: [3],
-                visible: cachedNewCarColumns["4"],
+                visible: cachedUsedCarColumns["4"],
             },
             {
                 targets: [4],
                 className: "dt-center",
                 type: 'extract-date',
-                visible: cachedNewCarColumns["5"],
+                visible: cachedUsedCarColumns["5"],
             },
             {
                 targets: [5],
-                visible: cachedNewCarColumns["6"],
+                visible: cachedUsedCarColumns["6"],
             },
             {
                 targets: [6], render: function (data) {
@@ -471,28 +467,19 @@ function initBlaBok() {
                     }
                     return data;
                 },
-                visible: cachedNewCarColumns["7"],
+                visible: cachedUsedCarColumns["7"],
             },
             {
                 targets: [7],
-                visible: cachedNewCarColumns["8"],
+                visible: cachedUsedCarColumns["8"],
             },
             {
                 targets: [8],
-                visible: cachedNewCarColumns["9"],
+                visible: cachedUsedCarColumns["9"],
             },
-            //{
-            //    targets: [9],
-            //    visible: cachedNewCarColumns["10"],
-            //},
             {
-                targets: [9], render: function (data) {
-                    if (data !== null && data !== '') {
-                        return numberWithSpaces(data);
-                    }
-                    return data;
-                },
-                visible: cachedNewCarColumns["10"],
+                targets: [9],
+                visible: cachedUsedCarColumns["10"],
             },
             {
                 targets: [10], render: function (data) {
@@ -501,23 +488,32 @@ function initBlaBok() {
                     }
                     return data;
                 },
-                visible: cachedNewCarColumns["11"],
+                visible: cachedUsedCarColumns["11"],
             },
             {
-                targets: [11],
-                visible: cachedNewCarColumns["12"],
+                targets: [11], render: function (data) {
+                    if (data !== null && data !== '') {
+                        return numberWithSpaces(data);
+                    }
+                    return data;
+                },
+                visible: cachedUsedCarColumns["12"],
             },
             {
                 targets: [12],
-                visible: cachedNewCarColumns["13"],
+                visible: cachedUsedCarColumns["13"],
             },
             {
                 targets: [13],
-                visible: cachedNewCarColumns["14"],
+                visible: cachedUsedCarColumns["14"],
             },
             {
                 targets: [14],
-                visible: cachedNewCarColumns["15"],
+                visible: cachedUsedCarColumns["15"],
+            },
+            {
+                targets: [15],
+                visible: cachedUsedCarColumns["16"],
                 className: "dt-center"
             }
         ],
@@ -530,20 +526,8 @@ function initBlaBok() {
     });
 }
 
-//function resetTabs() {
-//    console.log('MADE IT');
-//    let cachedNewCarColumnsAsJson = JSON.stringify(defaultNewCarColumns());
-//    window.localStorage.setItem('cachedNewCarColumns', cachedNewCarColumnsAsJson);
-//    try {
-//        cachedNewCarColumns = JSON.parse(cachedNewCarColumnsAsJson);
-//    } catch {
-//        cachedNewCarColumns = defaultNewCarColumns();
-//    }
-//    highlightSolgtRows();
-//}
-
-function defaultNewCarColumns() {
-    return { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true, 12: true, 13: true, 14: true, 15: true };
+function defaultUsedCarColumns() {
+    return { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true, 12: true, 13: true, 14: true, 15: true, 16: true };
 }
 
 function getDateWithLeadingZeros(data) {
@@ -594,7 +578,7 @@ function numberWithSpaces(x) {
 function editBlaBokEntry(nr) {
     $('#empty_btn').remove();
     $('#reset_btn').remove();
-    $('#modal_blabok_new_entry_footer').prepend('<button id="reset_btn" type="button" class="btn btn-warning me-auto" data="' + nr + '" title="Tilbakestill felter til opprinnelig data"><i class="bi bi-rewind"></i></button>');  
+    $('#modal_blabok_new_entry_footer').prepend('<button id="reset_btn" type="button" class="btn btn-warning me-auto" data="' + nr + '" title="Tilbakestill felter til opprinnelig data"><i class="bi bi-rewind"></i></button>');
     populateBlaBokEntryFormWithExistingData(nr);
     $('#my_blabok_new_entry_modal').modal('show');
     editBlaBokEntryModalHandlers(nr);
@@ -612,21 +596,21 @@ $(function () {
 });
 
 function initCachedColumns() {
-    let cachedNewCarColumnsAsJson = window.localStorage.getItem('cachedNewCarColumns');
-    if (cachedNewCarColumnsAsJson === null) {
-        cachedNewCarColumnsAsJson = JSON.stringify(defaultNewCarColumns());
-        window.localStorage.setItem('cachedNewCarColumns', cachedNewCarColumnsAsJson);
+    let cachedUsedCarColumnsAsJson = window.localStorage.getItem('cachedUsedCarColumns');
+    if (cachedUsedCarColumnsAsJson === null) {
+        cachedUsedCarColumnsAsJson = JSON.stringify(defaultUsedCarColumns());
+        window.localStorage.setItem('cachedUsedCarColumns', cachedUsedCarColumnsAsJson);
     }
 
     try {
-        return JSON.parse(cachedNewCarColumnsAsJson);
+        return JSON.parse(cachedUsedCarColumnsAsJson);
     } catch {
-        return defaultNewCarColumns();
+        return defaultUsedCarColumns();
     }
 }
 
 function initCachedColumnsHtml() {
-    $.each(cachedNewCarColumns, function (key, value) {
+    $.each(cachedUsedCarColumns, function (key, value) {
         if (!value) {
             $('#show_or_hide_column_' + key).addClass('hidden-column');
         }
@@ -634,13 +618,14 @@ function initCachedColumnsHtml() {
 }
 
 function saveCachedColumns() {
-    let cachedNewCarColumnsAsJson = JSON.stringify(cachedNewCarColumns);
-    window.localStorage.setItem('cachedNewCarColumns', cachedNewCarColumnsAsJson);
+    let cachedUsedCarColumnsAsJson = JSON.stringify(cachedUsedCarColumns);
+    window.localStorage.setItem('cachedUsedCarColumns', cachedUsedCarColumnsAsJson);
 }
 
 function setSellers() {
     $('#selgerOptions').empty();
     $.each(sellers, function (index) {
+        console.log(sellers[index]);
         $('#selgerOptions').append('<option value="' + sellers[index].name + '"></option>');
     });
 }
@@ -676,10 +661,10 @@ $(function () {
 
         if ($(this).hasClass("hidden-column")) {
             $(this).removeClass("hidden-column");
-            cachedNewCarColumns[getObjectKey] = true;
+            cachedUsedCarColumns[getObjectKey] = true;
         } else {
             $(this).addClass("hidden-column");
-            cachedNewCarColumns[getObjectKey] = false;
+            cachedUsedCarColumns[getObjectKey] = false;
         }
         saveCachedColumns();
     });
@@ -687,7 +672,7 @@ $(function () {
 
 $(document).ready(function () {
     function init() {
-        cachedNewCarColumns = initCachedColumns();
+        cachedUsedCarColumns = initCachedColumns();
         initCachedColumnsHtml();
         initBlaBok();
         getSellers();

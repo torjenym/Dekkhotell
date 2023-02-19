@@ -24,8 +24,17 @@
                         <li class="nav-item">
                             <a class="nav-link @(ViewData["Title"].ToString() == "DekkHotell" ? "active" : "")" aria-current="page" href="/">DekkHotell</a>
                         </li>
-                        <li class="nav-item">
+                        @*<li class="nav-item">
                             <a class="nav-link @(ViewData["Title"].ToString() == "BlaBok" ? "active" : "")" aria-current="page" href="/blåbok">BlåBok</a>
+                        </li>*@
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(ViewData["Title"].ToString() == "BlaBok Nybil" || ViewData["Title"].ToString() == "BlaBok Bruktbil" ? "active" : "")" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                BlåBok
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="nav-link @(ViewData["Title"].ToString() == "BlaBok Nybil" ? "active" : "")" aria-current="page" href="/blåbok">Nybil</a></li>
+                                <li><a class="nav-link @(ViewData["Title"].ToString() == "BlaBok Bruktbil" ? "active" : "")" aria-current="page" href="/blåbokBrukt">Bruktbil</a></li>
+                            </ul>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @(ViewData["Title"].ToString() == "Excel" ? "active" : "")" aria-current="page" href="/excel">Excel</a>

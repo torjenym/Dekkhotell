@@ -1,10 +1,7 @@
 ﻿using DekkHotell.Helpers;
 using DekkHotell.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Net;
-using static System.Collections.Specialized.BitVector32;
 
 namespace DekkHotell.Controllers
 {
@@ -22,17 +19,17 @@ namespace DekkHotell.Controllers
                 using (StreamReader r = new(path))
                 {
                     string json = r.ReadToEnd();
-                    var result = JsonConvert.DeserializeObject<Sellers>(json);
+                    var result = JsonConvert.DeserializeObject<List<Seller>>(json);
                     if (result != null)
                     {
                         return Json(result);
                     }
-                    return Json(new Sellers { Data = new List<Seller>() });
+                    return Json(new List<Seller>()); //return Json(new Sellers { Data = new List<Seller>() });
                 }
             }
-            catch
+            catch (Exception e)
             {
-                return Json(new Sellers { Data = new List<Seller>() });
+                return Json(new List<Seller>());
             }
         }
 

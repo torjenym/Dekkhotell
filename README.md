@@ -62,3 +62,7 @@ https://getbootstrap.com/docs/5.2/components/navbar/
 https://datatables.net/examples/styling/bootstrap5.html
 
 brukere: alle
+
+
+blabokbrukt-running-number.json - start: {"Number":6001}
+blabok-running-number.json - start: {"Number":5001}

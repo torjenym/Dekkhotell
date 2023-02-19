@@ -1,26 +1,27 @@
 ﻿@page
 @model BlaBokModel
-<link rel="stylesheet" type="text/css" href="~/css/blabok.css" asp-append-version="true" />
+<link rel="stylesheet" type="text/css" href="~/css/blabokbrukt.css" asp-append-version="true" />
 @{
-    ViewData["Title"] = "BlaBok Nybil";
+    ViewData["Title"] = "BlaBok Bruktbil";
 }
 @section Scripts
-{
-    <script type="text/javascript" src="~/js/blabok.js" asp-append-version="true"></script>
+    {
+    <script type="text/javascript" src="~/js/blabokbrukt.js" asp-append-version="true"></script>
 }
 
 <div>
-    <h3 class="display-4">BlåBok <span style="color:#ff4d4d; text-decoration: underline;">Nybil</span></h3>
-    @if (@Model.Authorization != null && @Model.Authorization.Username != null) {
-    <div class="container">
-        <div class="row justify-content-end">
-            <div class="col-6 col-lg-2 col-sm-4">
-                <p>
-                    <button type="button" class="btn btn-primary" onclick="newBlaBokEntry()">Ny oppføring</button>
-                </p>
+    <h3 class="display-4">BlåBok <span style="color:#1877f2; text-decoration: underline;">Bruktbil</span></h3>
+    @if (@Model.Authorization != null && @Model.Authorization.Username != null)
+    {
+        <div class="container">
+            <div class="row justify-content-end">
+                <div class="col-6 col-lg-2 col-sm-4">
+                    <p>
+                        <button type="button" class="btn btn-primary" onclick="newBlaBokEntry()">Ny oppføring</button>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
     }
     <div class="container">
         <div class="row justify-content-center">
@@ -38,25 +39,24 @@
         </div>
     </div>
     <div id="show_or_hide_columns">
-        Skjul/vis kolonner: <a id="show_or_hide_column_1" class="toggle-vis" data-column="0">Nr.</a> 
-        - <a id="show_or_hide_column_2" class="toggle-vis" data-column="1">Inn</a> 
-        - <a id="show_or_hide_column_3" class="toggle-vis" data-column="2">Reg.nr.</a> 
-        - <a id="show_or_hide_column_4" class="toggle-vis" data-column="3">Type</a> 
-        - <a id="show_or_hide_column_5" class="toggle-vis" data-column="4">Solgt.</a> 
-        - <a id="show_or_hide_column_6" class="toggle-vis" data-column="5">År</a> 
+        Skjul/vis kolonner: <a id="show_or_hide_column_1" class="toggle-vis" data-column="0">Nr.</a>
+        - <a id="show_or_hide_column_2" class="toggle-vis" data-column="1">Inn</a>
+        - <a id="show_or_hide_column_3" class="toggle-vis" data-column="2">Reg.nr.</a>
+        - <a id="show_or_hide_column_4" class="toggle-vis" data-column="3">Type</a>
+        - <a id="show_or_hide_column_5" class="toggle-vis" data-column="4">Solgt.</a>
+        - <a id="show_or_hide_column_6" class="toggle-vis" data-column="5">År</a>
         - <a id="show_or_hide_column_7" class="toggle-vis" data-column="6">Km</a>
-        - <a id="show_or_hide_column_8" class="toggle-vis" data-column="7">Selger</a> 
-        - <a id="show_or_hide_column_9" class="toggle-vis" data-column="8">Ny</a> 
-       @* - <a id="show_or_hide_column_10" class="toggle-vis" data-column="9">Forrige</a> *@
-        - <a id="show_or_hide_column_11" class="toggle-vis" data-column="9">Innpris</a> 
-        - <a id="show_or_hide_column_12" class="toggle-vis" data-column="10">Utpris</a>
-        - <a id="show_or_hide_column_13" class="toggle-vis" data-column="11">Innbytte</a>
-        - <a id="show_or_hide_column_14" class="toggle-vis" data-column="12">Garanti</a> 
-        - <a id="show_or_hide_column_15" class="toggle-vis" data-column="13">N.nr.</a> 
-        - <a id="show_or_hide_column_16" class="toggle-vis" data-column="14">Rediger</a>
-        @*<a class="reset-toggle" style="float: right;" onclick="resetTabs()">Reset faner</a>*@
+        - <a id="show_or_hide_column_8" class="toggle-vis" data-column="7">Selger</a>
+        - <a id="show_or_hide_column_9" class="toggle-vis" data-column="8">Ny</a>
+        - <a id="show_or_hide_column_10" class="toggle-vis" data-column="9">Forrige</a> 
+        - <a id="show_or_hide_column_11" class="toggle-vis" data-column="10">Innpris</a>
+        - <a id="show_or_hide_column_12" class="toggle-vis" data-column="11">Utpris</a>
+        - <a id="show_or_hide_column_13" class="toggle-vis" data-column="12">Innbytte</a>
+        - <a id="show_or_hide_column_14" class="toggle-vis" data-column="13">Garanti</a>
+        - <a id="show_or_hide_column_15" class="toggle-vis" data-column="14">N.nr.</a>
+        - <a id="show_or_hide_column_16" class="toggle-vis" data-column="15">Rediger</a>
     </div>
-    <br/>
+    <br />
     <table id="blabok_table" class="table table-bordered nowrap" style="width:100%">
         @*table-striped*@
         <thead>
@@ -70,7 +70,7 @@
                 <th>Km</th>
                 <th>Selger</th>
                 <th title="Ny eier">Ny</th>
-                @*<th title="Tidligere eier">Forrige</th>*@
+                <th title="Tidligere eier">Forrige</th>
                 <th>Innpris</th>
                 <th>Utpris</th>
                 <th>Innbytte</th>
@@ -90,7 +90,7 @@
                 <th>Km</th>
                 <th>Selger</th>
                 <th title="Ny eier">Ny</th>
-                @*<th title="Tidligere eier">Forrige</th>*@
+                <th title="Tidligere eier">Forrige</th>
                 <th>Innpris</th>
                 <th>Utpris</th>
                 <th>Innbytte</th>
@@ -157,24 +157,18 @@
                             </div>
                         </div>
 
-                        @*<div class="form-group row">
-                            <label for="selger" class="col-sm-3 col-form-label form-control-sm">Selger</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm" id="selger" placeholder="Selger">
-                            </div>
-                        </div>*@
                         <div class="form-group row">
                             <label for="nyeier" class="col-sm-3 col-form-label form-control-sm">Ny eier</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control form-control-sm" id="nyeier" placeholder="Ny eier">
                             </div>
                         </div>
-                        @*<div class="form-group row">
+                        <div class="form-group row">
                             <label for="forrigeeier" class="col-sm-3 col-form-label form-control-sm">Tidligere eier</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control form-control-sm" id="forrigeeier" placeholder="Tidligere eier">
                             </div>
-                        </div>*@
+                        </div>
                         <div class="form-group row">
                             <label for="innpris" class="col-sm-3 col-form-label form-control-sm">Innpris</label>
                             <div class="col-sm-9">

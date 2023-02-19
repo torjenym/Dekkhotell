@@ -5,19 +5,19 @@ using Newtonsoft.Json;
 
 namespace DekkHotell.Controllers
 {
-    [Route("api/v1/blabok")]
-    public class BlaBokController : Controller
+    [Route("api/v1/blabokbrukt")]
+    public class BlaBokBruktController : Controller
     {
         [HttpGet, Route("")]
         public JsonResult Index(int? year)
         {
             year ??= DateTime.Now.Year;
             var blaBokSet = LoadBlaBokSetJson((int)year);
-            return Json(new BlaBokResult { Data = blaBokSet });
+            return Json(new BlaBokBruktResult { Data = blaBokSet });
         }
 
         [HttpPut, Route("{nr}")]
-        public ActionResult Update(int nr, BlaBokEntry blaBokEntry)
+        public ActionResult Update(int nr, BlaBokBruktEntry blaBokEntry)
         {
             Request.Headers.TryGetValue("Authorization", out var token);
             if (!SessionHelper.VerifyAuthToken(HttpContext.Session, token))
@@ -31,8 +31,8 @@ namespace DekkHotell.Controllers
             }
 
             // get setIndex and block
-            List<BlaBokEntry> oldBlaBokSet;
-            BlaBokEntry? oldVersion;
+            List<BlaBokBruktEntry> oldBlaBokSet;
+            BlaBokBruktEntry? oldVersion;
             int oldSetIndex;
             int oldYear;
             GetBlaBokEntryStuff(blaBokEntry, nr, out oldBlaBokSet, out oldVersion, out oldSetIndex, out oldYear);
@@ -93,7 +93,7 @@ namespace DekkHotell.Controllers
         }
 
         [HttpPost, Route("")]
-        public ActionResult Create(BlaBokEntry blaBokEntry)
+        public ActionResult Create(BlaBokBruktEntry blaBokEntry)
         {
             Request.Headers.TryGetValue("Authorization", out var token);
             if (!SessionHelper.VerifyAuthToken(HttpContext.Session, token))
@@ -146,9 +146,9 @@ namespace DekkHotell.Controllers
             }
         }
 
-        private static LastBlaBokEntryVersion GetLastVersionBlaBok(BlaBokEntry blaBok)
+        private static LastBlaBokBruktEntryVersion GetLastVersionBlaBok(BlaBokBruktEntry blaBok)
         {
-            return new LastBlaBokEntryVersion()
+            return new LastBlaBokBruktEntryVersion()
             {
                 Nr = blaBok.Nr,
                 InnDato = blaBok.InnDato,
@@ -158,7 +158,7 @@ namespace DekkHotell.Controllers
                 Km = blaBok.Km,
                 Selger = blaBok.Selger,
                 NyEier = blaBok.NyEier,
-                //ForrigeEier = blaBok.ForrigeEier,
+                ForrigeEier = blaBok.ForrigeEier,
                 Innpris = blaBok.Innpris,
                 Utpris = blaBok.Utpris,
                 Innbytte = blaBok.Innbytte,
@@ -169,7 +169,7 @@ namespace DekkHotell.Controllers
             };
         }
 
-        private static void GetBlaBokEntryStuff(BlaBokEntry blaBokEntry, int nr, out List<BlaBokEntry> blaBokSet, out BlaBokEntry? foundBlaBokEntry, out int setIndex, out int versionYear)
+        private static void GetBlaBokEntryStuff(BlaBokBruktEntry blaBokEntry, int nr, out List<BlaBokBruktEntry> blaBokSet, out BlaBokBruktEntry? foundBlaBokEntry, out int setIndex, out int versionYear)
         {
             int year = blaBokEntry.InnDato.Year;
             var tempBlaBokSet = LoadBlaBokSetJson(year);
@@ -192,17 +192,17 @@ namespace DekkHotell.Controllers
             setIndex = tempSetIndex;
         }
 
-        private static BlaBokRunningNumber GetNextNumber()
+        private static BlaBokBruktRunningNumber GetNextNumber()
         {
             try
             {
-                string fileName = "blabok-running-number.json";
+                string fileName = "blabokbrukt-running-number.json";
                 string path = Path.Combine(Environment.CurrentDirectory, @"Data\", @"Json\", fileName);
 
                 using (StreamReader r = new(path))
                 {
                     string json = r.ReadToEnd();
-                    var result = JsonConvert.DeserializeObject<BlaBokRunningNumber>(json);
+                    var result = JsonConvert.DeserializeObject<BlaBokBruktRunningNumber>(json);
                     if (result != null)
                     {
                         return result;
@@ -212,16 +212,16 @@ namespace DekkHotell.Controllers
             catch
             {
                 // error
-                return new BlaBokRunningNumber() { Number = -1 };
+                return new BlaBokBruktRunningNumber() { Number = -1 };
             }
-            return new BlaBokRunningNumber() { Number = -1 };
+            return new BlaBokBruktRunningNumber() { Number = -1 };
         }
 
-        private static bool SaveBlaBokSetJson(List<BlaBokEntry> blaBokSet, int year)
+        private static bool SaveBlaBokSetJson(List<BlaBokBruktEntry> blaBokSet, int year)
         {
             try
             {
-                string fileName = $"blabok{year}.json";
+                string fileName = $"blabokbrukt{year}.json";
                 string path = Path.Combine(Environment.CurrentDirectory, @"Data\", @"Json\", fileName);
 
                 using (StreamWriter file = new(path))
@@ -238,12 +238,12 @@ namespace DekkHotell.Controllers
             }
         }
 
-        private static bool SaveNextNumberJson(BlaBokRunningNumber blaBokRunningNumber)
+        private static bool SaveNextNumberJson(BlaBokBruktRunningNumber blaBokRunningNumber)
         {
             blaBokRunningNumber = CheckNextNumber(blaBokRunningNumber);
             try
             {
-                string fileName = "blabok-running-number.json";
+                string fileName = "blabokbrukt-running-number.json";
                 string path = Path.Combine(Environment.CurrentDirectory, @"Data\", @"Json\", fileName);
 
                 using (StreamWriter file = new(path))
@@ -260,14 +260,14 @@ namespace DekkHotell.Controllers
             }
         }
 
-        private static BlaBokRunningNumber CheckNextNumber(BlaBokRunningNumber blaBokRunningNumber)
+        private static BlaBokBruktRunningNumber CheckNextNumber(BlaBokBruktRunningNumber blaBokRunningNumber)
         {
             string blaBokNumberAsString = blaBokRunningNumber.Number.ToString();
             string firstNumber = blaBokNumberAsString.Substring(0, 1);
             var number = Int32.Parse(firstNumber);
-            if (number%2 == 0)
+            if (number%2 != 0)
             {
-                // even number - skip
+                // odd number - skip
                 number += 1;
                 blaBokRunningNumber.Number = number * 1000;
                 return blaBokRunningNumber;
@@ -275,37 +275,17 @@ namespace DekkHotell.Controllers
             return blaBokRunningNumber;
         }
 
-        //private static void SaveBackupOfTireSetJson(List<TireSet> tireSets)
-        //{
-        //    try
-        //    {
-        //        DateTime now = DateTime.Now;
-        //        string fileName = $"tiresets.backup.{now.Day}.{now.Month}.{now.Year}.json";
-        //        string path = Path.Combine(Environment.CurrentDirectory, @"Data\", @"Json\", fileName);
-
-        //        using (StreamWriter file = new(path))
-        //        {
-        //            JsonSerializer serializer = new JsonSerializer();
-        //            serializer.Serialize(file, tireSets);
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        // error
-        //    }
-        //}
-
-        private static List<BlaBokEntry> LoadBlaBokSetJson(int year, bool force = false)
+        private static List<BlaBokBruktEntry> LoadBlaBokSetJson(int year, bool force = false)
         {
             try
             {
-                string fileName = $"blabok{year}.json";
+                string fileName = $"blabokbrukt{year}.json";
                 string path = Path.Combine(Environment.CurrentDirectory, @"Data\", @"Json\", fileName);
 
                 using (StreamReader r = new(path))
                 {
                     string json = r.ReadToEnd();
-                    var result = JsonConvert.DeserializeObject<List<BlaBokEntry>>(json);
+                    var result = JsonConvert.DeserializeObject<List<BlaBokBruktEntry>>(json);
                     if (result != null)
                     {
                         return result;
@@ -318,17 +298,17 @@ namespace DekkHotell.Controllers
                 {
                     return CreateNewBlaBokYear(year);
                 }
-                return new List<BlaBokEntry>();
+                return new List<BlaBokBruktEntry>();
             }
-            return new List<BlaBokEntry>();
+            return new List<BlaBokBruktEntry>();
         }
 
-        private static List<BlaBokEntry> CreateNewBlaBokYear(int year)
+        private static List<BlaBokBruktEntry> CreateNewBlaBokYear(int year)
         {
-            var blaBokSet = new List<BlaBokEntry>();
+            var blaBokSet = new List<BlaBokBruktEntry>();
             try
             {
-                string fileName = $"blabok{year}.json";
+                string fileName = $"blabokbrukt{year}.json";
                 string path = Path.Combine(Environment.CurrentDirectory, @"Data\", @"Json\", fileName);
 
                 using (StreamWriter file = new(path))

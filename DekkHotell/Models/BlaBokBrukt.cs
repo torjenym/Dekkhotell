@@ -1,6 +1,6 @@
 ﻿namespace DekkHotell.Models
 {
-    public class BlaBokEntry
+    public class BlaBokBruktEntry
     {
         public int Nr { get; set; }
         public DateTime InnDato { get; set; }
@@ -10,7 +10,7 @@
         public int? Km { get; set; }
         public string? Selger { get; set; }
         public string? NyEier { get; set; }
-        //public string? ForrigeEier { get; set; }
+        public string? ForrigeEier { get; set; }
         public int? Innpris { get; set; }
         public int? Utpris { get; set; }
         public string? Innbytte { get; set; }
@@ -18,10 +18,10 @@
         public string? NokkelNr { get; set; }
         public string? Forfatter { get; set; }
         public DateTime? Solgt { get; set; }
-        public LastBlaBokEntryVersion? ForrigeVersjon { get; set; }
+        public LastBlaBokBruktEntryVersion? ForrigeVersjon { get; set; }
     }
 
-    public class LastBlaBokEntryVersion
+    public class LastBlaBokBruktEntryVersion
     {
         public int Nr { get; set; }
         public DateTime InnDato { get; set; }
@@ -31,7 +31,7 @@
         public int? Km { get; set; }
         public string? Selger { get; set; }
         public string? NyEier { get; set; }
-        //public string? ForrigeEier { get; set; }
+        public string? ForrigeEier { get; set; }
         public int? Innpris { get; set; }
         public int? Utpris { get; set; }
         public string? Innbytte { get; set; }
@@ -41,12 +41,12 @@
         public DateTime? Solgt { get; set; }
     }
 
-    public class BlaBokResult
+    public class BlaBokBruktResult
     {
-        public List<BlaBokEntry>? Data { get; set; }
+        public List<BlaBokBruktEntry>? Data { get; set; }
     }
 
-    public class BlaBokRunningNumber
+    public class BlaBokBruktRunningNumber
     {
         public int Number { get; set; }
     }
