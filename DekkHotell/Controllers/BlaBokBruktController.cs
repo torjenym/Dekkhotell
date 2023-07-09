@@ -9,11 +9,48 @@ namespace DekkHotell.Controllers
     public class BlaBokBruktController : Controller
     {
         [HttpGet, Route("")]
-        public JsonResult Index(int? year)
+        public JsonResult Index(int? year, int? car_status)
         {
             year ??= DateTime.Now.Year;
             var blaBokSet = LoadBlaBokSetJson((int)year);
+            car_status ??= 1;
+            if (car_status >= 2)
+            {
+                blaBokSet = GetBlaBokBruktEntriesWitLatStatus((int)car_status, blaBokSet);
+            }
+
             return Json(new BlaBokBruktResult { Data = blaBokSet });
+        }
+
+        private List<BlaBokBruktEntry> GetBlaBokBruktEntriesWitLatStatus(int carStatus, List<BlaBokBruktEntry> blaBokSet)
+        {
+            var finalResult = new List<BlaBokBruktEntry>();
+            if (carStatus == 2)
+            {
+                // sold
+                foreach (var blabok in blaBokSet)
+                {
+                    if (blabok.Solgt != null)
+                    {
+                        finalResult.Add(blabok);
+                    }
+                }
+                return finalResult;
+            }
+            if (carStatus == 3)
+            {
+                // not sold
+                foreach (var blabok in blaBokSet)
+                {
+                    if (blabok.Solgt == null)
+                    {
+                        finalResult.Add(blabok);
+                    }
+                }
+                return finalResult;
+            }
+            // return empty
+            return finalResult;
         }
 
         [HttpPut, Route("{nr}")]

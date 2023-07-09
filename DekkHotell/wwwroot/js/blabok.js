@@ -5,6 +5,7 @@ let selectedYear;
 let searchNr;
 let currentSelectedRecordNr;
 let sellers;
+let carStatus;
 
 function newBlaBokEntry() {
     emptyBlaBokEntryForm();
@@ -254,20 +255,56 @@ function setSelectedYearBox() {
     $('#selected-blabok-year').text(selectedYear);
 }
 
+function carStatusChosen() {
+    let url = window.location.href;
+    let queryString = url.split("?")[1];
+    let urlParams = new URLSearchParams(queryString);
+    carStatus = urlParams.get("car_status");
+    if (carStatus === null || carStatus == 1) {
+        let checkbox = document.getElementById("vbtn-radio1");
+        checkbox.checked = true;
+        return;
+    }
+    if (carStatus == 2) {
+        let checkbox = document.getElementById("vbtn-radio2");
+        checkbox.checked = true;
+        return;
+    }
+    if (carStatus == 3) {
+        let checkbox = document.getElementById("vbtn-radio3");
+        checkbox.checked = true;
+    }
+}
+
+function setCarStatusChosen(status) {
+    let url = window.location.href;
+    let queryString = url.split("?")[1];
+    let urlParams = new URLSearchParams(queryString);
+
+    urlParams.set('car_status', status);
+    if (urlParams.get('year') !== null) {
+        urlParams.set('year', urlParams.get('year'));
+    }
+    window.location.search = urlParams;
+}
+
 function changeBlaBokYear(number) {
     selectedYear += number;
     if (isNaN(selectedYear)) {
         // fallback
         initSelectedYear();
     }
-    let urlParams = new URLSearchParams();
+
+    let url = window.location.href;
+    let queryString = url.split("?")[1];
+    let urlParams = new URLSearchParams(queryString);
+
     urlParams.set('year', selectedYear);
+    if (urlParams.get('car_status') !== null) {
+        urlParams.set('car_status', urlParams.get('car_status'));
+    }
+
     window.location.search = urlParams;
-    //setSelectedYearBox();
-    //blaBokTable.ajax.url("/api/v1/blabok?year=" + selectedYear);
-    //blaBokTable.ajax.reload(function (json) {
-    //    loadedBlaBokTableSetup(json);
-    //});
 }
 
 function modalBlaBokStatic() {
@@ -397,7 +434,7 @@ function initBlaBok() {
 
     blaBokTable = $('#blabok_table').DataTable({
         type: "GET",
-        ajax: "/api/v1/blabok?year=" + selectedYear,
+        ajax: "/api/v1/blabok?year=" + selectedYear + "&car_status=" + carStatus,
         stripeClasses: ['odd-row', 'even-row'],
         language: {
             url: 'json/datatables_no.json'
@@ -689,6 +726,7 @@ $(document).ready(function () {
     function init() {
         cachedNewCarColumns = initCachedColumns();
         initCachedColumnsHtml();
+        carStatusChosen();
         initBlaBok();
         getSellers();
         modalBlaBokStatic();

@@ -56,6 +56,16 @@
         - <a id="show_or_hide_column_16" class="toggle-vis" data-column="14">Rediger</a>
         @*<a class="reset-toggle" style="float: right;" onclick="resetTabs()">Reset faner</a>*@
     </div>
+    <div>
+        <div class="btn-group-horizontal" role="group" aria-label="Solgt status">
+            <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" onclick="setCarStatusChosen(1)">
+            <label class="btn btn-outline-danger" for="vbtn-radio1">Alle</label>
+            <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio2" autocomplete="off" onclick="setCarStatusChosen(2)">
+            <label class="btn btn-outline-danger" for="vbtn-radio2">Solgt</label>
+            <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio3" autocomplete="off" onclick="setCarStatusChosen(3)">
+            <label class="btn btn-outline-danger" for="vbtn-radio3">Usolgt</label>
+        </div>
+    </div>
     <br/>
     <table id="blabok_table" class="table table-bordered nowrap" style="width:100%">
         @*table-striped*@
