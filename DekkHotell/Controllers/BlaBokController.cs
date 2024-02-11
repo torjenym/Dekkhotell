@@ -9,10 +9,10 @@ namespace DekkHotell.Controllers
     public class BlaBokController : Controller
     {
         [HttpGet, Route("")]
-        public JsonResult Index(int? year, int? car_status)
+        public JsonResult Index(int? car_status) // int? year, 
         {
-            year ??= DateTime.Now.Year;
-            var blaBokSet = LoadBlaBokSetJson((int)year);
+            //year ??= DateTime.Now.Year;
+            var blaBokSet = LoadBlaBokSetJson(); // (int)year
             car_status ??= 1;
             if (car_status >= 2)
             {
@@ -71,8 +71,8 @@ namespace DekkHotell.Controllers
             List<BlaBokEntry> oldBlaBokSet;
             BlaBokEntry? oldVersion;
             int oldSetIndex;
-            int oldYear;
-            GetBlaBokEntryStuff(blaBokEntry, nr, out oldBlaBokSet, out oldVersion, out oldSetIndex, out oldYear);
+            //int oldYear;
+            GetBlaBokEntryStuff(blaBokEntry, nr, out oldBlaBokSet, out oldVersion, out oldSetIndex);//, out oldYear);
 
             if (oldSetIndex < 0 || oldVersion == null)
             {
@@ -80,53 +80,70 @@ namespace DekkHotell.Controllers
                 return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 301");
             }
 
-            if (oldYear == blaBokEntry.InnDato.Year)
-            {
-                // SAME YEAR, just update
-                blaBokEntry.ForrigeVersjon = GetLastVersionBlaBok(oldVersion);
-                blaBokEntry.Forfatter = authorization.Username;
-                oldBlaBokSet[oldSetIndex] = blaBokEntry;
+            blaBokEntry.ForrigeVersjon = GetLastVersionBlaBok(oldVersion);
+            blaBokEntry.Forfatter = authorization.Username;
+            oldBlaBokSet[oldSetIndex] = blaBokEntry;
 
-                try
-                {
-                    if (SaveBlaBokSetJson(oldBlaBokSet, oldYear))
-                    {
-                        return NoContent();
-                    }
-                    return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 302");
-                }
-                catch
-                {
-                    return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 303");
-                }
-            } 
-            else
+            try
             {
-                var replaceYear = blaBokEntry.InnDato.Year;
-                var replaceBlaBokSet = LoadBlaBokSetJson(replaceYear, true);
-                blaBokEntry.ForrigeVersjon = GetLastVersionBlaBok(oldVersion);
-                blaBokEntry.Forfatter = authorization.Username;
-                replaceBlaBokSet.Add(blaBokEntry);
-                try
+                if (SaveBlaBokSetJson(oldBlaBokSet))//, oldYear))
                 {
-                    // ADD NEW
-                    if (SaveBlaBokSetJson(replaceBlaBokSet, replaceYear))
-                    {
-                        oldBlaBokSet.RemoveAt(oldSetIndex);
-                        // REMOVE OLD
-                        if (SaveBlaBokSetJson(oldBlaBokSet, oldYear))
-                        {
-                            return NoContent();
-                        }
-                        return BadRequest("Noe gikk galt på server. NY versjon av oppføring ble laget, men gamle kunne IKKE slettes :( Vennligst kontakt Torje. Feilkode 304");
-                    }
-                    return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 305");
+                    return NoContent();
                 }
-                catch
-                {
-                    return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 306");
-                }
+                return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 302");
             }
+            catch
+            {
+                return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 303");
+            }
+
+            //if (oldYear == blaBokEntry.InnDato.Year)
+            //{
+            //    // SAME YEAR, just update
+            //    //blaBokEntry.ForrigeVersjon = GetLastVersionBlaBok(oldVersion);
+            //    //blaBokEntry.Forfatter = authorization.Username;
+            //    //oldBlaBokSet[oldSetIndex] = blaBokEntry;
+
+            //    try
+            //    {
+            //        if (SaveBlaBokSetJson(oldBlaBokSet))//, oldYear))
+            //        {
+            //            return NoContent();
+            //        }
+            //        return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 302");
+            //    }
+            //    catch
+            //    {
+            //        return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 303");
+            //    }
+            //} 
+            //else
+            //{
+            //    var replaceYear = blaBokEntry.InnDato.Year;
+            //    var replaceBlaBokSet = LoadBlaBokSetJson(replaceYear, true);
+            //    blaBokEntry.ForrigeVersjon = GetLastVersionBlaBok(oldVersion);
+            //    blaBokEntry.Forfatter = authorization.Username;
+            //    replaceBlaBokSet.Add(blaBokEntry);
+            //    try
+            //    {
+            //        // ADD NEW
+            //        if (SaveBlaBokSetJson(replaceBlaBokSet, replaceYear))
+            //        {
+            //            oldBlaBokSet.RemoveAt(oldSetIndex);
+            //            // REMOVE OLD
+            //            if (SaveBlaBokSetJson(oldBlaBokSet, oldYear))
+            //            {
+            //                return NoContent();
+            //            }
+            //            return BadRequest("Noe gikk galt på server. NY versjon av oppføring ble laget, men gamle kunne IKKE slettes :( Vennligst kontakt Torje. Feilkode 304");
+            //        }
+            //        return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 305");
+            //    }
+            //    catch
+            //    {
+            //        return BadRequest("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 306");
+            //    }
+            //}
         }
 
         [HttpPost, Route("")]
@@ -145,8 +162,8 @@ namespace DekkHotell.Controllers
 
             try
             {
-                var year = blaBokEntry.InnDato.Year;
-                var blaBokSet = LoadBlaBokSetJson(year, true);
+                //var year = blaBokEntry.InnDato.Year;
+                var blaBokSet = LoadBlaBokSetJson(true); // year
                 var nextRecordNumber = GetNextNumber();
                 if (nextRecordNumber.Number < 0)
                 {
@@ -171,7 +188,7 @@ namespace DekkHotell.Controllers
 
                 blaBokEntry.Forfatter = authorization.Username;
                 blaBokSet.Add(blaBokEntry);
-                if (SaveBlaBokSetJson(blaBokSet, year))
+                if (SaveBlaBokSetJson(blaBokSet))//, year))
                 {
                     return NoContent();
                 }
@@ -206,26 +223,27 @@ namespace DekkHotell.Controllers
             };
         }
 
-        private static void GetBlaBokEntryStuff(BlaBokEntry blaBokEntry, int nr, out List<BlaBokEntry> blaBokSet, out BlaBokEntry? foundBlaBokEntry, out int setIndex, out int versionYear)
+        private static void GetBlaBokEntryStuff(BlaBokEntry blaBokEntry, int nr, out List<BlaBokEntry> blaBokSet, out BlaBokEntry? foundBlaBokEntry, out int setIndex)//, out int versionYear)
         {
-            int year = blaBokEntry.InnDato.Year;
-            var tempBlaBokSet = LoadBlaBokSetJson(year);
+            //int year = blaBokEntry.InnDato.Year;
+            var tempBlaBokSet = LoadBlaBokSetJson(); // year
             var tempSetIndex = tempBlaBokSet.FindIndex(b => b.Nr == nr);
             if (tempSetIndex < 0)
             {
-                year--;
-                tempBlaBokSet = LoadBlaBokSetJson(year);
-                tempSetIndex = tempBlaBokSet.FindIndex(b => b.Nr == nr);
-                if (tempSetIndex < 0)
-                {
-                    year += 2; 
-                    tempBlaBokSet = LoadBlaBokSetJson(year);
-                    tempSetIndex = tempBlaBokSet.FindIndex(b => b.Nr == nr);
-                }
+                //year--;
+                //tempBlaBokSet = LoadBlaBokSetJson(year);
+                //tempSetIndex = tempBlaBokSet.FindIndex(b => b.Nr == nr);
+                //if (tempSetIndex < 0)
+                //{
+                //    year += 2; 
+                //    tempBlaBokSet = LoadBlaBokSetJson(year);
+                //    tempSetIndex = tempBlaBokSet.FindIndex(b => b.Nr == nr);
+                //}
+                tempSetIndex = -1;
             }
             blaBokSet = tempBlaBokSet;
             foundBlaBokEntry = tempBlaBokSet[tempSetIndex];
-            versionYear = foundBlaBokEntry.InnDato.Year;
+            //versionYear = foundBlaBokEntry.InnDato.Year;
             setIndex = tempSetIndex;
         }
 
@@ -254,11 +272,11 @@ namespace DekkHotell.Controllers
             return new BlaBokRunningNumber() { Number = -1 };
         }
 
-        private static bool SaveBlaBokSetJson(List<BlaBokEntry> blaBokSet, int year)
+        private static bool SaveBlaBokSetJson(List<BlaBokEntry> blaBokSet) // , int year
         {
             try
             {
-                string fileName = $"blabok{year}.json";
+                string fileName = $"blabok.json"; // {year}
                 string path = Path.Combine(Environment.CurrentDirectory, @"Data\", @"Json\", fileName);
 
                 using (StreamWriter file = new(path))
@@ -332,11 +350,11 @@ namespace DekkHotell.Controllers
         //    }
         //}
 
-        private static List<BlaBokEntry> LoadBlaBokSetJson(int year, bool force = false)
+        private static List<BlaBokEntry> LoadBlaBokSetJson(bool force = false) // int year, 
         {
             try
             {
-                string fileName = $"blabok{year}.json";
+                string fileName = $"blabok.json"; // {year}
                 string path = Path.Combine(Environment.CurrentDirectory, @"Data\", @"Json\", fileName);
 
                 using (StreamReader r = new(path))
@@ -353,19 +371,19 @@ namespace DekkHotell.Controllers
             {
                 if (force)
                 {
-                    return CreateNewBlaBokYear(year);
+                    return CreateNewBlaBok(); // year
                 }
                 return new List<BlaBokEntry>();
             }
             return new List<BlaBokEntry>();
         }
 
-        private static List<BlaBokEntry> CreateNewBlaBokYear(int year)
+        private static List<BlaBokEntry> CreateNewBlaBok() // int year
         {
             var blaBokSet = new List<BlaBokEntry>();
             try
             {
-                string fileName = $"blabok{year}.json";
+                string fileName = $"blabok.json"; // {year}
                 string path = Path.Combine(Environment.CurrentDirectory, @"Data\", @"Json\", fileName);
 
                 using (StreamWriter file = new(path))

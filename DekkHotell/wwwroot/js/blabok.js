@@ -1,7 +1,7 @@
 ﻿let blaBokData;
 let blaBokTable;
 let cachedNewCarColumns;
-let selectedYear;
+//let selectedYear;
 let searchNr;
 let currentSelectedRecordNr;
 let sellers;
@@ -242,18 +242,18 @@ function loadedBlaBokTableSetup(json) {
     highlightSolgtRows();
 }
 
-function initSelectedYear() {
-    let queryString = window.location.search;
-    let urlParams = new URLSearchParams(queryString);
-    selectedYear = parseInt(urlParams.get('year'));
-    if (selectedYear === null || isNaN(selectedYear)) {
-        selectedYear = new Date().getFullYear();
-    }
-}
+//function initSelectedYear() {
+//    let queryString = window.location.search;
+//    let urlParams = new URLSearchParams(queryString);
+//    selectedYear = parseInt(urlParams.get('year'));
+//    if (selectedYear === null || isNaN(selectedYear)) {
+//        selectedYear = new Date().getFullYear();
+//    }
+//}
 
-function setSelectedYearBox() {
-    $('#selected-blabok-year').text(selectedYear);
-}
+//function setSelectedYearBox() {
+//    $('#selected-blabok-year').text(selectedYear);
+//}
 
 function carStatusChosen() {
     let url = window.location.href;
@@ -282,30 +282,30 @@ function setCarStatusChosen(status) {
     let urlParams = new URLSearchParams(queryString);
 
     urlParams.set('car_status', status);
-    if (urlParams.get('year') !== null) {
-        urlParams.set('year', urlParams.get('year'));
-    }
+    //if (urlParams.get('year') !== null) {
+    //    urlParams.set('year', urlParams.get('year'));
+    //}
     window.location.search = urlParams;
 }
 
-function changeBlaBokYear(number) {
-    selectedYear += number;
-    if (isNaN(selectedYear)) {
-        // fallback
-        initSelectedYear();
-    }
+//function changeBlaBokYear(number) {
+//    selectedYear += number;
+//    if (isNaN(selectedYear)) {
+//        // fallback
+//        initSelectedYear();
+//    }
 
-    let url = window.location.href;
-    let queryString = url.split("?")[1];
-    let urlParams = new URLSearchParams(queryString);
+//    let url = window.location.href;
+//    let queryString = url.split("?")[1];
+//    let urlParams = new URLSearchParams(queryString);
 
-    urlParams.set('year', selectedYear);
-    if (urlParams.get('car_status') !== null) {
-        urlParams.set('car_status', urlParams.get('car_status'));
-    }
+//    urlParams.set('year', selectedYear);
+//    if (urlParams.get('car_status') !== null) {
+//        urlParams.set('car_status', urlParams.get('car_status'));
+//    }
 
-    window.location.search = urlParams;
-}
+//    window.location.search = urlParams;
+//}
 
 function modalBlaBokStatic() {
     $('#my_blabok_new_entry_modal').modal({
@@ -351,7 +351,7 @@ function executeCreateNewBlaBokRecord(obj) {
         dataType: 'json',
         success: function () {
             alert("Oppføring lagret!");
-            blaBokTable.ajax.url("/api/v1/blabok?year=" + selectedYear);
+            blaBokTable.ajax.url("/api/v1/blabok");// ?year=" + selectedYear);
             blaBokTable.ajax.reload(function (json) {
                 loadedBlaBokTableSetup(json);
             });
@@ -383,7 +383,7 @@ function executeUpdateBlaBokRecord(obj) {
         dataType: 'json',
         success: function () {
             alert("Oppføring er oppdatert!");
-            blaBokTable.ajax.url("/api/v1/blabok?year=" + selectedYear);
+            blaBokTable.ajax.url("/api/v1/blabok");//?year=" + selectedYear);
             blaBokTable.ajax.reload(function (json) {
                 loadedBlaBokTableSetup(json);
             });
@@ -429,12 +429,12 @@ function getSellers() {
 }
 
 function initBlaBok() {
-    initSelectedYear();
-    setSelectedYearBox();
+    //initSelectedYear();
+    //setSelectedYearBox();
 
     blaBokTable = $('#blabok_table').DataTable({
         type: "GET",
-        ajax: "/api/v1/blabok?year=" + selectedYear + "&car_status=" + carStatus,
+        ajax: "/api/v1/blabok?car_status=" + carStatus, // year=" + selectedYear + "&
         stripeClasses: ['odd-row', 'even-row'],
         language: {
             url: 'json/datatables_no.json'
@@ -558,6 +558,7 @@ function initBlaBok() {
                 className: "dt-center"
             }
         ],
+        order: [[0, 'desc']],
         error: function () {
             alert("Failed loading data. Contact support ... Ring han Torje")
         },
@@ -568,7 +569,6 @@ function initBlaBok() {
 }
 
 //function resetTabs() {
-//    console.log('MADE IT');
 //    let cachedNewCarColumnsAsJson = JSON.stringify(defaultNewCarColumns());
 //    window.localStorage.setItem('cachedNewCarColumns', cachedNewCarColumnsAsJson);
 //    try {

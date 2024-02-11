@@ -20,6 +20,7 @@ $(document).ready(function () {
                 password: $("#login_password").val()
             }
             verifyLogin(userObj);
+            console.log("button");
         });
     }
 
@@ -92,6 +93,7 @@ $(document).ready(function () {
             dataType: 'json',
             success: function () {
                 $('#my_main_modal').modal('hide');
+                alert("Bruker er oppdatert!");
             },
             error: function (error) {
                 if (error.status === 401) {

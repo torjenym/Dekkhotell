@@ -1,7 +1,7 @@
 ﻿let blaBokData;
 let blaBokTable;
 let cachedUsedCarColumns;
-let selectedYear;
+//let selectedYear;
 let searchNr;
 let currentSelectedRecordNr;
 let sellers;
@@ -45,6 +45,8 @@ function newBlaBokEntryModalHandlers() {
         emptyBlaBokEntryForm();
     });
     $('#save_btn').unbind('click');
+
+    // $('#save_btn').on('click', function () {
     $('#save_btn').click(function () {
         let object = {};
         object.innDato = $('#inndato').val();
@@ -242,18 +244,18 @@ function loadedBlaBokTableSetup(json) {
     highlightSolgtRows();
 }
 
-function initSelectedYear() {
-    let queryString = window.location.search;
-    let urlParams = new URLSearchParams(queryString);
-    selectedYear = parseInt(urlParams.get('year'));
-    if (selectedYear === null || isNaN(selectedYear)) {
-        selectedYear = new Date().getFullYear();
-    }
-}
+//function initSelectedYear() {
+//    let queryString = window.location.search;
+//    let urlParams = new URLSearchParams(queryString);
+//    selectedYear = parseInt(urlParams.get('year'));
+//    if (selectedYear === null || isNaN(selectedYear)) {
+//        selectedYear = new Date().getFullYear();
+//    }
+//}
 
-function setSelectedYearBox() {
-    $('#selected-blabok-year').text(selectedYear);
-}
+//function setSelectedYearBox() {
+//    $('#selected-blabok-year').text(selectedYear);
+//}
 
 function carStatusChosen() {
     let url = window.location.href;
@@ -282,30 +284,30 @@ function setCarStatusChosen(status) {
     let urlParams = new URLSearchParams(queryString);
 
     urlParams.set('car_status', status);
-    if (urlParams.get('year') !== null) {
-        urlParams.set('year', urlParams.get('year'));
-    }
+    //if (urlParams.get('year') !== null) {
+    //    urlParams.set('year', urlParams.get('year'));
+    //}
     window.location.search = urlParams;
 }
 
-function changeBlaBokYear(number) {
-    selectedYear += number;
-    if (isNaN(selectedYear)) {
-        // fallback
-        initSelectedYear();
-    }
+//function changeBlaBokYear(number) {
+//    selectedYear += number;
+//    if (isNaN(selectedYear)) {
+//        // fallback
+//        initSelectedYear();
+//    }
 
-    let url = window.location.href;
-    let queryString = url.split("?")[1];
-    let urlParams = new URLSearchParams(queryString);
+//    let url = window.location.href;
+//    let queryString = url.split("?")[1];
+//    let urlParams = new URLSearchParams(queryString);
 
-    urlParams.set('year', selectedYear);
-    if (urlParams.get('car_status') !== null) {
-        urlParams.set('car_status', urlParams.get('car_status'));
-    }
+//    urlParams.set('year', selectedYear);
+//    if (urlParams.get('car_status') !== null) {
+//        urlParams.set('car_status', urlParams.get('car_status'));
+//    }
 
-    window.location.search = urlParams;
-}
+//    window.location.search = urlParams;
+//}
 
 function modalBlaBokStatic() {
     $('#my_blabok_new_entry_modal').modal({
@@ -351,7 +353,7 @@ function executeCreateNewBlaBokRecord(obj) {
         dataType: 'json',
         success: function () {
             alert("Oppføring lagret!");
-            blaBokTable.ajax.url("/api/v1/blabokbrukt?year=" + selectedYear);
+            blaBokTable.ajax.url("/api/v1/blabokbrukt");//?year=" + selectedYear);
             blaBokTable.ajax.reload(function (json) {
                 loadedBlaBokTableSetup(json);
             });
@@ -383,7 +385,7 @@ function executeUpdateBlaBokRecord(obj) {
         dataType: 'json',
         success: function () {
             alert("Oppføring er oppdatert!");
-            blaBokTable.ajax.url("/api/v1/blabokbrukt?year=" + selectedYear);
+            blaBokTable.ajax.url("/api/v1/blabokbrukt");//?year=" + selectedYear);
             blaBokTable.ajax.reload(function (json) {
                 loadedBlaBokTableSetup(json);
             });
@@ -428,13 +430,17 @@ function getSellers() {
     });
 }
 
-function initBlaBok() {
-    initSelectedYear();
-    setSelectedYearBox();
+function initBlaBokBrukt() {
+    //initSelectedYear();
+    //setSelectedYearBox();
 
     blaBokTable = $('#blabok_table').DataTable({
+        //dom: 'Bfrtip',
+        //buttons: [
+        //    'copy', 'csv', 'excel', 'pdf', 'print'
+        //],
         type: "GET",
-        ajax: "/api/v1/blabokbrukt?year=" + selectedYear + "&car_status=" + carStatus,
+        ajax: "/api/v1/blabokbrukt?car_status=" + carStatus, // year=" + selectedYear + "&
         stripeClasses: ['odd-row', 'even-row'],
         language: {
             url: 'json/datatables_no.json'
@@ -559,6 +565,7 @@ function initBlaBok() {
                 className: "dt-center"
             }
         ],
+        order: [[0, 'desc']],
         error: function () {
             alert("Failed loading data. Contact support ... Ring han Torje")
         },
@@ -667,7 +674,6 @@ function saveCachedColumns() {
 function setSellers() {
     $('#selgerOptions').empty();
     $.each(sellers, function (index) {
-        console.log(sellers[index]);
         $('#selgerOptions').append('<option value="' + sellers[index].name + '"></option>');
     });
 }
@@ -717,7 +723,7 @@ $(document).ready(function () {
         cachedUsedCarColumns = initCachedColumns();
         initCachedColumnsHtml();
         carStatusChosen();
-        initBlaBok();
+        initBlaBokBrukt();
         getSellers();
         modalBlaBokStatic();
     }
