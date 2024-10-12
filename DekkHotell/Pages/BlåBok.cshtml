@@ -1,16 +1,16 @@
 ﻿@page
 @model BlaBokModel
-<link rel="stylesheet" type="text/css" href="~/css/blabok.css" asp-append-version="true" />
+<link rel="stylesheet" type="text/css" href="~/css/blabok.css" />
 @{
     ViewData["Title"] = "BlaBok Nybil";
 }
 @section Scripts
 {
-    <script type="text/javascript" src="~/js/blabok.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/blabok.js"></script>
 }
 
 <div>
-    <h3 class="display-4">BlåBok <span style="color:#ff4d4d; text-decoration: underline;">Nybil</span></h3>
+    <h3 class="display-6">BlåBok <span style="color:#ff4d4d; text-decoration: underline;">Nybil</span></h3>
     @if (@Model.Authorization != null && @Model.Authorization.Username != null) {
     <div class="container">
         <div class="row justify-content-end">

@@ -1,14 +1,26 @@
-﻿function setLocalStorageSession(username, token) {
-    localStorage.setItem('dekkHotellUsername', username);
-    localStorage.setItem('dekkHotellUserToken', token);
-}
+﻿$(document).ready(function () {
+    function keepAlive() {
+        setTimeout(() => {
+            if (!localStorage.getItem('dekkHotellUserToken')) {
+                keepAlive();
+            }
+            else {
+                $.ajax({
+                    type: "GET",
+                    url: "/api/v1/auth/keep-alive",
+                    headers: { "Authorization": localStorage.getItem('dekkHotellUserToken') },
+                    dataType: 'json',
+                    success: function (data) {
+                        keepAlive();
+                    },
+                    error: function (error) {
+                        logoutRequest();
+                    }
+                });
+            }
+        }, 600000); // 600,000 => 10 minutes 
+    }
 
-function removeLocalStorageSession() {
-    localStorage.removeItem('dekkHotellUserToken');
-    localStorage.removeItem('dekkHotellUsername');
-}
-
-$(document).ready(function () {
     function initLogin() {
         if ($("#login_btn").length <= 0) {
             return;
@@ -20,7 +32,6 @@ $(document).ready(function () {
                 password: $("#login_password").val()
             }
             verifyLogin(userObj);
-            console.log("button");
         });
     }
 
@@ -48,11 +59,11 @@ $(document).ready(function () {
                 if (data.success === undefined || data.success === null || data.success === false) {
                     $("#login_username").val('');
                     $("#login_password").val('');
-                    removeLocalStorageSession();
+                    removeAuthCookie();
                     alert("Failed to login!");
                     return;
                 }
-                setLocalStorageSession(data.username, data.token);
+                setAuthCookie(data.username, data.token);
                 window.location.reload();
             },
             error: function (error) {
@@ -71,7 +82,7 @@ $(document).ready(function () {
                     alert("Failed to logout. Contact support ... Ring han Torje")
                     return;
                 }
-                removeLocalStorageSession();
+                removeAuthCookie();
                 window.location.reload();
             },
             error: function () {
@@ -80,15 +91,14 @@ $(document).ready(function () {
         });
     }
 
-    function updateUser(obj) {
-        if (localStorage.getItem('dekkHotellUserToken') == null) {
+    function updateUser(obj) {if (readAuthCookie('dekkhotell_token') == null) {
             alert("No access!");
             return;
         }
         $.ajax({
             type: "PUT",
             url: "/api/v1/user",
-            headers: { "Authorization": localStorage.getItem('dekkHotellUserToken') },
+            headers: { "Authorization": readAuthCookie('dekkhotell_token') },
             data: obj,
             dataType: 'json',
             success: function () {
@@ -97,7 +107,7 @@ $(document).ready(function () {
             },
             error: function (error) {
                 if (error.status === 401) {
-                    removeLocalStorageSession();
+                    removeAuthCookie();
                     alert("Session timeout. You need to login again");
                     window.location.reload();
                     return;
@@ -146,8 +156,8 @@ $(document).ready(function () {
         $('#modal_main_content').append(edit_user_content);
 
         $('#modal_main_footer').empty();
-        let edit_user_footer = '<button id="save_btn" type="button" class="btn btn-primary" data="' + id + '" title="Lagre data og lukk vindu"><i class="bi bi-save2"></i> Lagre</button>'
-            + '<button id="close_btn" type="button" class="btn btn-secondary" title="Lukk vindu uten å lagre"><i class="bi bi-x-lg"></i></button>';
+        let edit_user_footer = '<button id="save_profile_btn" type="button" class="btn btn-primary" data="' + id + '" title="Lagre data og lukk vindu"><i class="bi bi-save2"></i> Lagre</button>'
+            + '<button id="close_profile_btn" type="button" class="btn btn-secondary" title="Lukk vindu uten å lagre"><i class="bi bi-x-lg"></i></button>';
         $('#modal_main_footer').append(edit_user_footer);
 
         editMainModalHandlers();
@@ -155,8 +165,8 @@ $(document).ready(function () {
     }
 
     function editMainModalHandlers() {
-        $('#save_btn').unbind('click');
-        $('#save_btn').click(function () {
+        $('#save_profile_btn').unbind('click');
+        $('#save_profile_btn').click(function () {
             let object = {
                 oldPassword: $('#old_password').val(),
                 newPassword: $('#new_password').val(),
@@ -176,8 +186,8 @@ $(document).ready(function () {
             }
             updateUser(object);
         });
-        $('#close_btn').unbind('click');
-        $('#close_btn').click(function () {
+        $('#close_profile_btn').unbind('click');
+        $('#close_profile_btn').click(function () {
             $('#my_main_modal').modal('hide');
         });
     }
@@ -193,6 +203,7 @@ $(document).ready(function () {
         initLogin();
         initLogout();
         modalStatic();
+        keepAlive();
     }
 
     init();

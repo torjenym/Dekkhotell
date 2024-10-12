@@ -1,9 +1,7 @@
 ﻿using DekkHotell.Helpers;
 using DekkHotell.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using static System.Collections.Specialized.BitVector32;
 
 namespace DekkHotell.Controllers
 {
@@ -16,6 +14,17 @@ namespace DekkHotell.Controllers
         {
             m_config = config;
         }
+
+        [HttpGet, Route("keep-alive")]
+        public ActionResult KeepAlive()
+        {
+            var auth = SessionHelper.GetSessionObjectFromKey<Auth>(HttpContext.Session, "auth");
+            if (auth == null)
+            {
+                return BadRequest();
+            }
+            return Json(new AuthResponse() { Success = true });
+        }   
 
         [HttpPost, Route("login")]
         public ActionResult Login(Login login)

@@ -1,6 +1,7 @@
 ﻿let tireHotel;
 let tireSetTable;
 let availableLocationsList = [];
+let loggedIn = false;
 
 function editLocation(id) {
     $('#modal_tiresets_title').empty();
@@ -149,7 +150,7 @@ function setDekkhotellExtraInfo() {
 }
 
 function getEditButton(a, b, row) {
-    if (localStorage.getItem('dekkHotellUserToken')) {
+    if (loggedIn) {
         return '<button type="button" onclick="editLocation(' + row.id +')" class="btn btn-primary btn-sm edit-btn" data=' + row.id + ' title="Rediger lokasjon">'
             + '<i class="bi bi-pencil-fill"></i></button>'; // </svg>
     }
@@ -212,6 +213,9 @@ function modalTiresetStatic() {
 
 // https://datatables.net/examples/styling/bootstrap5.html
 function initDekkHotell() {
+    let authToken = readAuthCookie('dekkhotell_token');
+    loggedIn = authToken ? true : false;
+
     tireSetTable = $('#dekkhotell_table').DataTable({
         type: "GET",
         ajax: "/api/v1/tireset",
@@ -278,14 +282,15 @@ function initDekkHotell() {
 }
 
 function updateDekkHotell(obj) {
-    if (localStorage.getItem('dekkHotellUserToken') == null) {
+    if (readAuthCookie('dekkhotell_token') == null) {
+        loggedIn = false;
         alert("No access!");
         return;
     }
     $.ajax({
         type: "PUT",
         url: "/api/v1/tireset/" + obj.Id,
-        headers: { "Authorization": localStorage.getItem('dekkHotellUserToken') },
+        headers: { "Authorization": readAuthCookie('dekkhotell_token') },
         data: obj,
         dataType: 'json',
         success: function () {
@@ -296,7 +301,7 @@ function updateDekkHotell(obj) {
         },
         error: function (error) {
             if (error.status === 401) {
-                removeLocalStorageSession();
+                removeAuthCookie();
                 alert("Session timeout. You need to login again");
                 window.location.reload();
                 return;

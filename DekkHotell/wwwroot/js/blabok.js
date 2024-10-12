@@ -6,6 +6,7 @@ let searchNr;
 let currentSelectedRecordNr;
 let sellers;
 let carStatus;
+let loggedIn = false;
 
 function newBlaBokEntry() {
     emptyBlaBokEntryForm();
@@ -327,7 +328,8 @@ function stringDateToCSharpDateTime(date) {
 }
 
 function executeCreateNewBlaBokRecord(obj) {
-    if (localStorage.getItem('dekkHotellUserToken') == null) {
+    if (readAuthCookie('dekkhotell_token')) {
+        loggedIn = false;
         alert("No access!");
         return;
     }
@@ -346,7 +348,7 @@ function executeCreateNewBlaBokRecord(obj) {
     $.ajax({
         type: "POST",
         url: "/api/v1/blabok/",
-        headers: { "Authorization": localStorage.getItem('dekkHotellUserToken') },
+        headers: { "Authorization": readAuthCookie('dekkhotell_token') },
         data: obj,
         dataType: 'json',
         success: function () {
@@ -360,7 +362,7 @@ function executeCreateNewBlaBokRecord(obj) {
         },
         error: function (error) {
             if (error.status === 401) {
-                removeLocalStorageSession();
+                removeAuthCookie();
                 alert("Session timeout. You need to login again");
                 window.location.reload();
                 return;
@@ -371,14 +373,15 @@ function executeCreateNewBlaBokRecord(obj) {
 }
 
 function executeUpdateBlaBokRecord(obj) {
-    if (localStorage.getItem('dekkHotellUserToken') == null) {
+    if (readAuthCookie('dekkhotell_token') == null) {
         alert("No access!");
+        loggedIn = false;
         return;
     }
     $.ajax({
         type: "PUT",
         url: "/api/v1/blabok/" + obj.nr,
-        headers: { "Authorization": localStorage.getItem('dekkHotellUserToken') },
+        headers: { "Authorization": readAuthCookie('dekkhotell_token') },
         data: obj,
         dataType: 'json',
         success: function () {
@@ -392,7 +395,7 @@ function executeUpdateBlaBokRecord(obj) {
         },
         error: function (error) {
             if (error.status === 401) {
-                removeLocalStorageSession();
+                removeAuthCookie();
                 alert("Session timeout. You need to login again");
                 window.location.reload();
                 return;
@@ -403,14 +406,15 @@ function executeUpdateBlaBokRecord(obj) {
 }
 
 function getSellers() {
-    if (localStorage.getItem('dekkHotellUserToken') == null) {
+    if (readAuthCookie('dekkhotell_token') == null) {
+        loggedIn = false;
         return;
     }
 
     $.ajax({
         type: "GET",
         url: "/api/v1/user/seller",
-        headers: { "Authorization": localStorage.getItem('dekkHotellUserToken') },
+        headers: { "Authorization": readAuthCookie('dekkhotell_token') },
         dataType: 'json',
         success: function (data) {
             sellers = data;
@@ -418,7 +422,7 @@ function getSellers() {
         },
         error: function (error) {
             if (error.status === 401) {
-                removeLocalStorageSession();
+                removeAuthCookie();
                 alert("Session timeout. You need to login again");
                 window.location.reload();
                 return;
@@ -431,6 +435,9 @@ function getSellers() {
 function initBlaBok() {
     //initSelectedYear();
     //setSelectedYearBox();
+
+    let authToken = readAuthCookie('dekkhotell_token');
+    loggedIn = authToken ? true : false;
 
     blaBokTable = $('#blabok_table').DataTable({
         type: "GET",
@@ -604,7 +611,7 @@ function highlightSolgtRows() {
 }
 
 function getSolgtBlaBokEntryButton(a, b, row) {
-    if (localStorage.getItem('dekkHotellUserToken') && row.solgt === null) {
+    if (loggedIn && row.solgt === null) {
         return '<button type="button" onclick="updateSolgtBlaBokEntry(' + row.nr + ')" class="btn btn-success btn-sm edit-btn" data=' + row.nr + ' title="Sett Solgt (idag) på BlåBok-oppføring">'
             + '<i class="bi bi-currency-dollar"></i></button>';
     }
@@ -616,7 +623,7 @@ function getSolgtBlaBokEntryButton(a, b, row) {
 }
 
 function getEditBlaBokEntryButton(a, b, row) {
-    if (localStorage.getItem('dekkHotellUserToken')) {
+    if (loggedIn) {
         return '<button type="button" onclick="editBlaBokEntry(' + row.nr + ')" class="btn btn-primary btn-sm edit-btn" data=' + row.nr + ' title="Rediger BLåBok-oppføring">'
             + '<i class="bi bi-pencil-fill"></i></button>';
     }

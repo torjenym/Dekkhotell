@@ -2,9 +2,6 @@
 using DekkHotell.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
 namespace DekkHotell.Controllers
 {
@@ -147,12 +144,14 @@ namespace DekkHotell.Controllers
                     }
                 }
             }
-            catch
+            catch (Exception e)
             {
                 // error
-                return new List<TireSet>();
+                throw new Exception("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 203");
+                //return new List<TireSet>();
             }
-            return new List<TireSet>();
+            throw new Exception("Noe gikk galt på server. Vennligst kontakt Torje. Feilkode 204");
+            //return new List<TireSet>();
         }
 
         //private readonly SolutionEnvironment myEnvironment;

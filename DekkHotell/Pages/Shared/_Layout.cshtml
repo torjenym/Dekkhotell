@@ -4,40 +4,46 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NymoBil - @ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true"  />
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css" integrity="sha512-ELV+xyi8IhEApPS/pSj66+Jiw+sOT1Mqkzlh8ExXihe4zfqbWkxPRi8wptXIO9g73FSlhmquFlUOuMSoXz5IRw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" type="text/css" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" type="text/css" href="~/DekkHotell.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="~/css/site.css" />
+    <link rel="stylesheet" type="text/css" href="~/DekkHotell.styles.css" />
+    @* asp-append-version="true" *@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <!--bg-light-->
             <div class="container-fluid">
+                @* <button type="button" class="btn btn-primary">Primary</button> *@
                 <a class="navbar-brand" href="/">NymoBil</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewData["Title"].ToString() == "DekkHotell" ? "active" : "")" aria-current="page" href="/">DekkHotell</a>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 list-group">
+                        <li class="nav-item list-group-item @(ViewData["Title"].ToString() == "DekkHotell" ? "active" : "")">
+                            <a class="nav-link" aria-current="page" href="/">DekkHotell</a>
                         </li>
                         @*<li class="nav-item">
                             <a class="nav-link @(ViewData["Title"].ToString() == "BlaBok" ? "active" : "")" aria-current="page" href="/blåbok">BlåBok</a>
                         </li>*@
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle @(ViewData["Title"].ToString() == "BlaBok Nybil" || ViewData["Title"].ToString() == "BlaBok Bruktbil" ? "active" : "")" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <li class="nav-item dropdown list-group-item @(ViewData["Title"].ToString() == "BlaBok Nybil" || ViewData["Title"].ToString() == "BlaBok Bruktbil" ? "active" : "")">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 BlåBok
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="nav-link @(ViewData["Title"].ToString() == "BlaBok Nybil" ? "active" : "")" aria-current="page" href="/blåbok">Nybil</a></li>
-                                <li><a class="nav-link @(ViewData["Title"].ToString() == "BlaBok Bruktbil" ? "active" : "")" aria-current="page" href="/blåbokBrukt">Bruktbil</a></li>
+                                <li class="nav-item list-group-item dropdown-item @(ViewData["Title"].ToString() == "BlaBok Nybil" ? "active" : "not-active")"><a class="nav-link" aria-current="page" href="/blåbok">Nybil</a></li>
+                                <li class="nav-item list-group-item dropdown-item @(ViewData["Title"].ToString() == "BlaBok Bruktbil" ? "active" : "not-active")"><a class="nav-link" aria-current="page" href="/blåbokBrukt">Bruktbil</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewData["Title"].ToString() == "Excel" ? "active" : "")" aria-current="page" href="/excel">Excel</a>
+                        <li class="nav-item list-group-item @(ViewData["Title"].ToString() == "Sikkerhetsblad" ? "active" : "")">
+                            <a class="nav-link" aria-current="page" href="/sikkerhetsblad">Sikkerhetsblad</a>
+                        </li>
+                        <li class="nav-item list-group-item @(ViewData["Title"].ToString() == "Excel" ? "active" : "")">
+                            <a class="nav-link" aria-current="page" href="/excel">Excel</a>
                         </li>
                         @*<li class="nav-item">
                             <a class="nav-link" href="#">Link</a>
@@ -160,10 +166,11 @@
     @*<script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js" integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="~/js/cookies.js" asp-append-version="true"></script>
     <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
     <script type="text/javascript">
         // Fallback incase session is dead on server, but not yet updated on client
-        if (sessionToBeRemoved) { removeLocalStorageSession(); }
+        if (sessionToBeRemoved) { removeAuthCookie(); }
     </script>
     <script type="text/javascript" src="~/js/switch.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

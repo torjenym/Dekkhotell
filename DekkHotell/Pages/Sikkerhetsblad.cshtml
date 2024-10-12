@@ -1,0 +1,33 @@
+﻿@page
+@model ExcelModel
+<link rel="stylesheet" type="text/css" href="~/css/sikkerhetsblad.css"/>
+@{
+    ViewData["Title"] = "Sikkerhetsblad";
+}
+@section Scripts
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="~/js/sikkerhetsblad.js"></script>
+}
+
+<div>
+    <h3 class="display-6">Sikkerhetsblad <small><small><small>- Work in progress ...</small></small></small></h3>
+    <div id="my_sikkerhetsblad_modal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 id="modal_sikkerhetsblad_title" class="modal-title">
+                        <!-- TITLE -->
+                    </h5>
+                </div>
+                <div id="modal_sikkerhetsblad_content" class="modal-body">
+                    <!-- CONTENT -->
+                </div>
+                <div id="modal_sikkerhetsblad_footer" class="modal-footer">
+                    <!-- ACTION BUTTONS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -10,7 +10,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
+// why is my session killed so soon?
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
